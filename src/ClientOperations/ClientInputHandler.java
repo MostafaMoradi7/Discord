@@ -55,6 +55,8 @@ public class ClientInputHandler implements Runnable{
     }
 
     public PortableData getPortableData(){
-        return portableData;
+        PortableData tmpData = portableData;
+        portableData = null;
+        return tmpData;
     }
 }
