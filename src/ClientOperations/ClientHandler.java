@@ -127,8 +127,12 @@ public class ClientHandler implements Runnable {
         System.out.println("""
                 [1] find user
                 [2] new private chat
+                [3] group chat
+                [4] channels
+                [5] logout
                 """);
         choice = scanner.nextInt();
+        //-----------------------------------------------CHOICE #1-----------------------------------------------\\
         if (choice == 1) {
             System.out.println("Enter clients username: ");
             scanner.nextLine();
@@ -147,7 +151,9 @@ public class ClientHandler implements Runnable {
             } else {
                 System.out.println("NO CLIENT FOUND WITH THIS INFORMATION!");
             }
-        } else if (choice == 2) {
+        }
+        //-----------------------------------------------CHOICE #2-----------------------------------------------\\
+        else if (choice == 2) {
             System.out.println("""
                     [1] new private chat
                     [2] chat lists
@@ -233,6 +239,76 @@ public class ClientHandler implements Runnable {
                             //TODO: HANDLE THE EXCEPTION
                         }
 
+                    }
+                }
+            }
+        }
+        //-----------------------------------------------CHOICE #3-----------------------------------------------\\
+        else if (choice == 3) {
+            System.out.println("""
+                    [1] new group chat
+                    [2] chat lists
+                    [3] back
+                    """);
+            choice = scanner.nextInt();
+
+            if (choice == 1) {
+                System.out.println("Enter group name: ");
+                scanner.nextLine();
+                String groupName = scanner.nextLine();
+                Group group = new Group(groupName, this.client);
+                PortableData portableData = new PortableData("create a new group", group);
+                outputHandler.setPortableData(portableData);
+                tOUT.start();
+
+                PortableData receivedData;
+                while ((receivedData = inputHandler.getPortableData()) != null) {
+                    // TODO: wait till server sends required info
+                }
+                if (receivedData.getOrder().equals("successful")) {
+                    System.out.println("You can find this group in your Group Chat lists.");
+                } else {
+                    System.out.println("Can't create this group now, please try again later!");
+                }
+            } else if (choice == 2) {
+                PortableData portableData = new PortableData("clients group chat lists", this.client);
+                outputHandler.setPortableData(portableData);
+                tOUT.start();
+
+                PortableData receivedData;
+                while ((receivedData = inputHandler.getPortableData()) != null) {
+                    //TODO: wait till server sends required info
+                }
+                /*
+                      AN ARRAYLIST OF Groups WILL BE SENT
+                        IF THERE IS NO Group CHAT WITH THIS CLIENT
+                        THEN THE SERVER WILL SEND NULL
+                                                                        */
+                if (receivedData.getOrder().equals("successful")) {
+                    ArrayList<Group> groups = (ArrayList<Group>) receivedData.getObject();
+                    if (groups.size() == 0) {
+                        System.out.println("You have no group chats!");
+                    } else {
+                        System.out.println("Choose a group chat to work with:");
+                        for (int i = 0; i < groups.size(); i++) {
+                            System.out.println("[" + (i + 1) + "] " + groups.get(i).getGroupName());
+                        }
+                        choice = scanner.nextInt();
+                        if (choice > 0 && choice <= groups.size()) {
+                            PortableData portableData1 = new PortableData("return group chat", groups.get(choice - 1));
+                            outputHandler.setPortableData(portableData1);
+                            tOUT.start();
+
+                            while ((receivedData = inputHandler.getPortableData()) != null) {
+                                //TODO: wait till server sends required info
+                            }
+                            if (receivedData.getOrder().equals("successful")) {
+                                Group group = (Group) receivedData.getObject();
+                                //QUESTION: HOW TO SHOW NEW MESSAGES?
+                                outputHandler.setGapChat(group);
+                                tOUT.start();
+                            }
+                        }
                     }
                 }
             }
