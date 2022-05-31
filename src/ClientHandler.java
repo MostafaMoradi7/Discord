@@ -7,41 +7,44 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 
-public class ClientHandler extends Thread{
+public class ClientHandler extends Thread {
     database database;
     Socket client;
-    public ClientHandler(Socket client , database database){
-        this.client=client;
-        this.database= database;
+
+    public ClientHandler(Socket client, database database) {
+        this.client = client;
+        this.database = database;
     }
+
     @Override
     public void run() {
         try {
             ObjectOutputStream outputStream = new ObjectOutputStream(client.getOutputStream());
             ObjectInputStream objectInputStream = new ObjectInputStream(client.getInputStream());
-            while (true){
-                PortableData portableData= ((PortableData) objectInputStream.readObject());
-                if(Objects.equals(portableData.getOrder(), "registration")){
+            while (true) {
+                PortableData portableData = ((PortableData) objectInputStream.readObject());
+                if (Objects.equals(portableData.getOrder(), "registration")) {
                     Client client = (Client) portableData.getObject();
                     PortableData sendResponse;
-                    if(insertNewUserData(client) == 1){
-                         sendResponse=new PortableData("successful",null);
-                    }else {
-                         sendResponse=new PortableData("unsuccessful",null);
+                    if (insertNewUserData(client) == 1) {
+                        sendResponse = new PortableData("successful", null);
+                    } else {
+                        sendResponse = new PortableData("unsuccessful", null);
                     }
                     outputStream.writeObject(sendResponse);
-                }else if(Objects.equals(portableData.getOrder(),"login")){
+                } else if (Objects.equals(portableData.getOrder(), "login")) {
                     Client client = (Client) portableData.getObject();
-                    if (checkLogin(client) == 1){
-
-                    }
+//                    if (checkLogin(client) == null) {
+//
+//                    }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public int insertNewUserData(Client client){
+
+    public int insertNewUserData(Client client) {
         String sql = "INSERT INTO User(username,password,email,phone_number,status,profile,created_at) VALUES(?,?,?,?,?,?,?)";
 
         try (Connection conn = database.connect();
@@ -60,17 +63,37 @@ public class ClientHandler extends Thread{
         }
         return 0;
     }
-    public int checkLogin(Client client){
+    public PortableData checkLogin(Client client){
+        try {
+            Client databaseClient = findUser(client);
+            if (databaseClient == null){
+                return new PortableData("user not found",null);
+            }
+            if (Objects.equals(databaseClient.getPassword(), client.getPassword())) {
+                databaseClient.setToken("alskdfjljasdfjl");
+                return new PortableData("true" , databaseClient);
+            }else{
+                return new PortableData("password is incorrect",null);
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public Client findUser(Client client) {
         String sql = "SELECT * FROM User WHERE username = ?;";
         try (Connection conn = database.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1,client.getUsername());
+            pstmt.setString(1, client.getUsername());
             ResultSet rst = pstmt.executeQuery();
-            System.out.println(rst);
-            return 1;
-        } catch (SQLException e) {
+            return new Client(rst.getString("username"),rst.getString("password"),rst.getString("email"),
+                    rst.getString("phone_number"),Status.valueOf(rst.getString("status")));
+        }catch (Exception e){
             System.out.println(e.getMessage());
         }
-        return 0;
+        return null;
     }
+
+
 }

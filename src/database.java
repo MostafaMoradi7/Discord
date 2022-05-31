@@ -1,3 +1,4 @@
+import java.io.FilterOutputStream;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -84,30 +85,35 @@ public class database {
         System.out.println("Table Product Created Successfully!!!");
 
     }
-    public int checkLogin(Client client){
-        Client find ;
+    public PortableData checkLogin(Client client){
+        try {
+            Client databaseClient = findUser(client);
+            if (databaseClient == null){
+                return new PortableData("user not found",null);
+            }
+            if (Objects.equals(databaseClient.getPassword(), client.getPassword())) {
+                databaseClient.setToken("alskdfjljasdfjl");
+                return new PortableData("true" , databaseClient);
+            }else{
+                return new PortableData("password is incorrect",null);
+            }
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public Client findUser(Client client) {
         String sql = "SELECT * FROM User WHERE username = ?;";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1,client.getUsername());
+            pstmt.setString(1, client.getUsername());
             ResultSet rst = pstmt.executeQuery();
-//            if (user not found){
-//                return 0
-//            }
-            if (Objects.equals(rst.getString("password"), client.getPassword())){
-                Client client1 = new Client(rst.getString("username"), rst.getString("password"),
-                        rst.getString("email"),rst.getString("phone_number"),
-                        Status.valueOf(rst.getString("Status")));
-                //client1.setCreated_At(rst.getString("created_at"));
-                client1.setToken(null);
-                System.out.println(client1.toString());
-                return 1;
-            }else{
-                return 2;
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getErrorCode());
+            return new Client(rst.getString("username"),rst.getString("password"),rst.getString("email"),
+                    rst.getString("phone_number"),Status.valueOf(rst.getString("status")));
+        }catch (Exception e){
+            System.out.println(e.getMessage());
         }
-        return 0;
+        return null;
     }
 }
