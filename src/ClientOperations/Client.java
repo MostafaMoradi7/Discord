@@ -9,6 +9,7 @@ public class Client implements Serializable {
     /*
             FIELDS
                                 */
+    private String clientID;
     private String username;
     private String password;
     private String email;
@@ -37,6 +38,10 @@ public class Client implements Serializable {
 
     public String getUsername() {
         return username;
+    }
+
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
     }
 
     public String getPassword() {

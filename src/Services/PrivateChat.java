@@ -1,12 +1,13 @@
 package Services;
 
 import ClientOperations.Client;
-import ClientOperations.PortableData;
 import MessageOperations.PrivateChatMessage;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PrivateChat implements Runnable{
+public class PrivateChat implements Serializable {
+    private String chatID;
     private Client clientONE;
     private Client clientTWO;
     private ArrayList<PrivateChatMessage> messages;
@@ -17,13 +18,16 @@ public class PrivateChat implements Runnable{
         messages = new ArrayList<>();
     }
 
-    @Override
-    public void run() {
 
+    public Client getClientTWO() {
+        return clientTWO;
     }
 
-    public void receiveMessage(PortableData portableData){
-        PrivateChatMessage privateChat = (PrivateChatMessage) portableData.getObject();
-        messages.add(privateChat);
+    public Client getClientONE() {
+        return clientONE;
+    }
+
+    public void setChatID(String chatID) {
+        this.chatID = chatID;
     }
 }
