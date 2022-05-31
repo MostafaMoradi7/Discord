@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class PrivateChatMessage implements Serializable {
+    private String messageID;
     private Client from;
     private Client to;
     private LocalDateTime dateTime;
@@ -16,6 +17,10 @@ public class PrivateChatMessage implements Serializable {
         this.to = to;
         this.message = message;
         dateTime = LocalDateTime.now();
+    }
+
+    public void setMessageID(String messageID) {
+        this.messageID = messageID;
     }
 
     public Client getFrom() {
