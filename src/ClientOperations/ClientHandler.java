@@ -3,10 +3,14 @@ package ClientOperations;
 import MessageOperations.ChannelMessage;
 import MessageOperations.GroupMessage;
 import MessageOperations.PrivateChatMessage;
+import Services.Channel;
+import Services.Group;
+import Services.PrivateChat;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class ClientHandler implements Runnable{
@@ -15,21 +19,27 @@ public class ClientHandler implements Runnable{
     private Socket clientSocket;
     private ClientOutputHandler outputHandler;
     private ClientInputHandler inputHandler;
+    private PortableData portableData;
 
     private ArrayList<PrivateChatMessage> pvMessages;
-    private ArrayList<GroupMessage> gapMessages;
-    private ArrayList<ChannelMessage> channelsMessages;
+    private HashMap<String, ArrayList<GroupMessage>> gapMessages;
+    private HashMap<String, ArrayList<ChannelMessage>> channelsMessages;
 
     public ClientHandler(){
         try {
             clientSocket = new Socket("192.168.43.30", 6500);
             outputHandler = new ClientOutputHandler(clientSocket);
-            inputHandler = new ClientInputHandler(clientSocket);
+            inputHandler = new ClientInputHandler(this, clientSocket);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public void setPortableData(PortableData portableData){
+        this.portableData = portableData;
+    }
+
 
     public Client registerClient(){
         Scanner scanner = new Scanner(System.in);
@@ -129,7 +139,7 @@ public class ClientHandler implements Runnable{
             System.out.println("Enter clients email: ");
             String email = scanner.nextLine();
             Client target = new Client(username, null, email, null, null);
-            PortableData targetFind = new PortableData("find client", client);
+            PortableData targetFind = new PortableData("find client", target);
             outputHandler.setPortableData(targetFind);
 
             tOUT.start();
@@ -159,5 +169,20 @@ public class ClientHandler implements Runnable{
         }catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    public void receivePVMessage(PortableData newMessage){
+        PrivateChatMessage pvMessage = (PrivateChatMessage) newMessage.getObject();
+        pvMessages.add(pvMessage);
+    }
+
+    public void receiveChannelMessage(PortableData newMessage){
+        ChannelMessage channelMessage = (ChannelMessage) newMessage.getObject();
+        channelsMessages.get(channelMessage.getChannelName()).add(channelMessage);
+    }
+
+    public void receiveGapMessage(PortableData newMessage){
+        GroupMessage groupMessage = (GroupMessage) newMessage.getObject();
+        gapMessages.get(groupMessage);
     }
 }
