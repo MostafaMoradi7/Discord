@@ -34,9 +34,8 @@ public class ClientHandler extends Thread {
                     outputStream.writeObject(sendResponse);
                 } else if (Objects.equals(portableData.getOrder(), "login")) {
                     Client client = (Client) portableData.getObject();
-//                    if (checkLogin(client) == null) {
-//
-//                    }
+                    PortableData sendResponse = checkLogin(findUser(client));
+                    outputStream.writeObject(sendResponse);
                 }
             }
         } catch (Exception e) {
@@ -63,19 +62,20 @@ public class ClientHandler extends Thread {
         }
         return 0;
     }
-    public PortableData checkLogin(Client client){
+
+    public PortableData checkLogin(Client client) {
         try {
             Client databaseClient = findUser(client);
-            if (databaseClient == null){
-                return new PortableData("user not found",null);
+            if (databaseClient == null) {
+                return new PortableData("user not found", null);
             }
             if (Objects.equals(databaseClient.getPassword(), client.getPassword())) {
                 databaseClient.setToken("alskdfjljasdfjl");
-                return new PortableData("true" , databaseClient);
-            }else{
-                return new PortableData("password is incorrect",null);
+                return new PortableData("true", databaseClient);
+            } else {
+                return new PortableData("password is incorrect", null);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return null;
@@ -83,13 +83,14 @@ public class ClientHandler extends Thread {
 
     public Client findUser(Client client) {
         String sql = "SELECT * FROM User WHERE username = ?;";
-        try (Connection conn = database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try {
+            Connection conn = database.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, client.getUsername());
             ResultSet rst = pstmt.executeQuery();
-            return new Client(rst.getString("username"),rst.getString("password"),rst.getString("email"),
-                    rst.getString("phone_number"),Status.valueOf(rst.getString("status")));
-        }catch (Exception e){
+            return new Client(rst.getString("username"), rst.getString("password"), rst.getString("email"),
+                    rst.getString("phone_number"), Status.valueOf(rst.getString("status")));
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return null;
