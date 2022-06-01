@@ -36,6 +36,11 @@ public class ClientHandler extends Thread {
                     Client client = (Client) portableData.getObject();
                     PortableData sendResponse = checkLogin(findUser(client));
                     outputStream.writeObject(sendResponse);
+                }else if (Objects.equals(portableData.getOrder(),"new private chat")){
+                    PrivateChat privateChat = (PrivateChat) portableData.getObject();
+                    newPrivateChat(privateChat);
+                }else if(Objects.equals(portableData.getOrder(),"list of private chat")){
+
                 }
             }
         } catch (Exception e) {
@@ -91,6 +96,19 @@ public class ClientHandler extends Thread {
             return new Client(rst.getString("username"), rst.getString("password"), rst.getString("email"),
                     rst.getString("phone_number"), Status.valueOf(rst.getString("status")));
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    public PortableData newPrivateChat(PrivateChat privateChat){
+        String sql = "INSERT INTO private_chats(user1,user2) VALUES(?,?)";
+        try (Connection conn = database.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, privateChat.getClientONE().getClientID());
+            pstmt.setString(2, privateChat.getClientTWO().getClientID());
+            pstmt.executeUpdate();
+            return new PortableData("ok",null);
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;

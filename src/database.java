@@ -149,13 +149,26 @@ public class database {
         String sql = "INSERT INTO private_chats(user1,user2) VALUES(?,?)";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, privateChat.getClientONE().getUsername());
-            pstmt.setString(2, privateChat.getClientTWO().getPassword());
+            pstmt.setString(1, privateChat.getClientONE().getClientID());
+            pstmt.setString(2, privateChat.getClientTWO().getClientID());
             pstmt.executeUpdate();
-            return null;
+            return new PortableData("ok",null);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    public PortableData listPrivateChat(Client client){
+        String sql = "SELECT * FROM private_chats WHERE client1 = ?;";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, client.getClientID());
+            pstmt.executeQuery();
+            return new PortableData("ok",null);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;
     }
 }
+
