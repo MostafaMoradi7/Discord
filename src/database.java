@@ -1,6 +1,4 @@
-import java.io.FilterOutputStream;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class database {
@@ -85,6 +83,19 @@ public class database {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+    public Client findUser(Client client) {
+        String sql = "SELECT * FROM User WHERE username = ?;";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, client.getUsername());
+            ResultSet rst = pstmt.executeQuery();
+            return new Client(rst.getString("username"),rst.getString("password"),rst.getString("email"),
+                    rst.getString("phone_number"),Status.valueOf(rst.getString("status")));
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
     public PortableData checkLogin(Client client){
         try {
             Client databaseClient = findUser(client);
@@ -102,16 +113,15 @@ public class database {
         }
         return null;
     }
-
-    public Client findUser(Client client) {
-        String sql = "SELECT * FROM User WHERE username = ?;";
+    public PortableData newPrivateChat(PrivateChat privateChat){
+        String sql = "INSERT INTO private_chats(user1,user2) VALUES(?,?)";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, client.getUsername());
-            ResultSet rst = pstmt.executeQuery();
-            return new Client(rst.getString("username"),rst.getString("password"),rst.getString("email"),
-                    rst.getString("phone_number"),Status.valueOf(rst.getString("status")));
-        }catch (Exception e){
+            pstmt.setString(1, privateChat.getClientONE().getUsername());
+            pstmt.setString(2, privateChat.getClientTWO().getPassword());
+            pstmt.executeUpdate();
+            return null;
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;

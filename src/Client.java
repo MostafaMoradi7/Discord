@@ -7,6 +7,7 @@ public class Client implements Serializable {
     /*
             FIELDS
                                 */
+    private String clientID;
     private String username;
     private String password;
     private String email;
