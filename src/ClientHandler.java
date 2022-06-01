@@ -104,8 +104,8 @@ public class ClientHandler extends Thread {
         String sql = "INSERT INTO private_chats(user1,user2) VALUES(?,?)";
         try (Connection conn = database.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, privateChat.getClientONE().getClientID());
-            pstmt.setString(2, privateChat.getClientTWO().getClientID());
+            pstmt.setInt(1, privateChat.getClientONE().getClientID());
+            pstmt.setInt(2, privateChat.getClientTWO().getClientID());
             pstmt.executeUpdate();
             return new PortableData("ok",null);
         } catch (SQLException e) {

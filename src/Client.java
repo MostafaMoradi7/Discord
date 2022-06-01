@@ -7,7 +7,7 @@ public class Client implements Serializable {
     /*
             FIELDS
                                 */
-    private String clientID;
+    private int clientID;
     private String username;
     private String password;
     private String email;
@@ -93,7 +93,11 @@ public class Client implements Serializable {
         this.token = token;
     }
 
-    public String getClientID() {
+    public int getClientID() {
         return clientID;
+    }
+
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
     }
 }

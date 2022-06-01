@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class PrivateChat {
-        private String chatID;
+        private int chatID;
         private Client clientONE;
         private Client clientTWO;
         private ArrayList<PrivateChatMessage> messages;
@@ -24,8 +24,11 @@ public class PrivateChat {
         return messages;
     }
 
-    public String getChatID() {
+    public int getChatID() {
         return chatID;
+    }
+    public void setChatID(int chatID){
+            this.chatID=chatID;
     }
 }
 

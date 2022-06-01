@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class database {
@@ -115,7 +116,7 @@ public class database {
         System.out.println("Table Product Created Successfully!!!");
 
     }
-    public Client findUser(Client client) {
+    public Client findUserWithUsername(Client client) {
         String sql = "SELECT * FROM users WHERE username = ?;";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -130,7 +131,7 @@ public class database {
     }
     public PortableData checkLogin(Client client){
         try {
-            Client databaseClient = findUser(client);
+            Client databaseClient = findUserWithUsername(client);
             if (databaseClient == null){
                 return new PortableData("user not found",null);
             }
@@ -149,8 +150,8 @@ public class database {
         String sql = "INSERT INTO private_chats(user1,user2) VALUES(?,?)";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, privateChat.getClientONE().getClientID());
-            pstmt.setString(2, privateChat.getClientTWO().getClientID());
+            pstmt.setInt(1, privateChat.getClientONE().getClientID());
+            pstmt.setInt(2, privateChat.getClientTWO().getClientID());
             pstmt.executeUpdate();
             return new PortableData("ok",null);
         } catch (SQLException e) {
@@ -158,17 +159,50 @@ public class database {
         }
         return null;
     }
-    public PortableData listPrivateChat(Client client){
-        String sql = "SELECT * FROM private_chats WHERE client1 = ?;";
+    public Client findUserWithId(int id){
+        String sql = "SELECT * FROM users WHERE id;";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, client.getClientID());
-            pstmt.executeQuery();
-            return new PortableData("ok",null);
-        } catch (SQLException e) {
+            pstmt.setInt(1, id);
+            ResultSet rst = pstmt.executeQuery();
+            Client client = new Client(rst.getString("username"),rst.getString("password"),rst.getString("email"),
+                    rst.getString("phone_number"),Status.valueOf(rst.getString("status")));
+            client.setClientID(id);
+        }catch (Exception e){
             System.out.println(e.getMessage());
         }
         return null;
+    }
+    public PortableData listPrivateChat(Client client){
+        ArrayList<PrivateChat> privateChats=new ArrayList<>();
+        String sql = "SELECT * FROM private_chats WHERE client1 = ?;";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, client.getClientID());
+            ResultSet rst = pstmt.executeQuery();
+            while (rst.next()){
+                PrivateChat privateChat = new PrivateChat(client,findUserWithId(rst.getInt("client2")));
+                privateChat.setChatID(rst.getInt("id"));
+                privateChats.add(privateChat);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        String sql2 = "SELECT * FROM private_chats WHERE client2 = ?;";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql2)) {
+            pstmt.setInt(1, client.getClientID());
+            ResultSet rst = pstmt.executeQuery();
+            while (rst.next()){
+                PrivateChat privateChat = new PrivateChat(client,findUserWithId(rst.getInt("client1")));
+                privateChat.setChatID(rst.getInt("id"));
+                privateChats.add(privateChat);
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        System.out.println(privateChats);
+        return new PortableData("Array list private chat",privateChats);
     }
 }
 
