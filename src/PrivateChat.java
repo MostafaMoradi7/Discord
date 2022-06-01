@@ -23,5 +23,9 @@ public class PrivateChat {
     public ArrayList<PrivateChatMessage> getMessages() {
         return messages;
     }
+
+    public String getChatID() {
+        return chatID;
+    }
 }
 

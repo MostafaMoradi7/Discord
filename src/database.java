@@ -4,10 +4,11 @@ import java.util.Objects;
 public class database {
 
     public void main() {
-        //createNewDatabase("discordProject.sqlite");
-        //CreateTableUser();
-        Client client = new Client("kjlj","sfsjakd",null,null,Status.DO_NOT_DISTURB);
-        checkLogin(client);
+        createNewDatabase("projectAP.sqlite");
+        createTableUser();
+        createTablePrivateChat();
+//        Client client = new Client("messi","123",null,null,Status.DO_NOT_DISTURB);
+//        checkLogin(client);
     }
 
     /**
@@ -32,7 +33,7 @@ public class database {
     }
 
     public Connection connect() {
-        String url = "jdbc:sqlite:C:\\Users\\Mojtaba\\Desktop\\discord project\\database\\discordProject.sqlite";
+        String url = "jdbc:sqlite:C:\\Users\\Mojtaba\\Desktop\\discord project\\database\\projectAP.sqlite";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -42,13 +43,13 @@ public class database {
         return conn;
     }
 
-    public void CreateTableUser() {
+    public void createTableUser() {
         Statement stmt = null;
         try {
             Connection conn = this.connect();
             System.out.println("Database Opened...\n");
             stmt = conn.createStatement();
-            String sql = "CREATE TABLE User " +
+            String sql = "CREATE TABLE users " +
 
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
 
@@ -83,8 +84,39 @@ public class database {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+    public void createTablePrivateChat() {
+        Statement stmt = null;
+        try {
+            Connection conn = this.connect();
+            System.out.println("Database Opened...\n");
+            stmt = conn.createStatement();
+            String sql = "CREATE TABLE private_chats " +
+
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+
+                    " client1 INTEGER NOT NULL, " +
+
+                    " client2 INTEGER NOT NULL ) ";
+
+            stmt.executeUpdate(sql);
+
+            stmt.close();
+
+            conn.close();
+
+        } catch (Exception e) {
+
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+
+            System.exit(0);
+
+        }
+
+        System.out.println("Table Product Created Successfully!!!");
+
+    }
     public Client findUser(Client client) {
-        String sql = "SELECT * FROM User WHERE username = ?;";
+        String sql = "SELECT * FROM users WHERE username = ?;";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, client.getUsername());

@@ -92,4 +92,8 @@ public class Client implements Serializable {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public String getClientID() {
+        return clientID;
+    }
 }
