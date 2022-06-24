@@ -25,7 +25,8 @@ public class Client implements Serializable {
     // TOKEN
     private String token;
 
-    public Client(String username, String password, String email, String phone_Number, Status status) {
+    public Client(int clientID,String username, String password, String email, String phone_Number, Status status) {
+        this.clientID = clientID;
         this.username = username;
         this.password = password;
         this.email = email;
@@ -73,7 +74,8 @@ public class Client implements Serializable {
     @Override
     public String toString() {
         return "Client{" +
-                "username='" + username + '\'' +
+                "clientID=" + clientID +
+                ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", phone_Number='" + phone_Number + '\'' +

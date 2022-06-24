@@ -1,15 +1,18 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class database {
 
     public void main() {
-        createNewDatabase("projectAP.sqlite");
-        createTableUser();
-        createTablePrivateChat();
-//        Client client = new Client("messi","123",null,null,Status.DO_NOT_DISTURB);
+//        createNewDatabase("projectAP.sqlite");
+//        createTableUser();
+//        createTablePrivateChat();
+       Client client = new Client(0,"messi","123",null,null,Status.DO_NOT_DISTURB);
+        System.out.println(checkLogin(client));
 //        checkLogin(client);
+       // listPrivateChat(client);
     }
 
     /**
@@ -116,19 +119,21 @@ public class database {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+    // test done
     public Client findUserWithUsername(Client client) {
         String sql = "SELECT * FROM users WHERE username = ?;";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, client.getUsername());
             ResultSet rst = pstmt.executeQuery();
-            return new Client(rst.getString("username"),rst.getString("password"),rst.getString("email"),
+            return new Client(rst.getInt("id"),rst.getString("username"),rst.getString("password"),rst.getString("email"),
                     rst.getString("phone_number"),Status.valueOf(rst.getString("status")));
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
         return null;
     }
+    // test done
     public PortableData checkLogin(Client client){
         try {
             Client databaseClient = findUserWithUsername(client);
@@ -155,7 +160,7 @@ public class database {
             pstmt.executeUpdate();
             return new PortableData("ok",null);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
         return null;
     }
@@ -165,9 +170,8 @@ public class database {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             ResultSet rst = pstmt.executeQuery();
-            Client client = new Client(rst.getString("username"),rst.getString("password"),rst.getString("email"),
+            Client client = new Client(id,rst.getString("username"),rst.getString("password"),rst.getString("email"),
                     rst.getString("phone_number"),Status.valueOf(rst.getString("status")));
-            client.setClientID(id);
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -186,7 +190,7 @@ public class database {
                 privateChats.add(privateChat);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println((Arrays.toString(e.getStackTrace())));
         }
         String sql2 = "SELECT * FROM private_chats WHERE client2 = ?;";
         try (Connection conn = this.connect();
@@ -199,10 +203,28 @@ public class database {
                 privateChats.add(privateChat);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println((Arrays.toString(e.getStackTrace())));
         }
         System.out.println(privateChats);
         return new PortableData("Array list private chat",privateChats);
+    }
+    public int insertNewUserData(Client client) {
+        String sql = "INSERT INTO User(username,password,email,phone_number,status,profile,created_at) VALUES(?,?,?,?,?,?,?)";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, client.getUsername());
+            pstmt.setString(2, client.getPassword());
+            pstmt.setString(3, client.getEmail());
+            pstmt.setString(4, client.getPhone_Number());
+            pstmt.setString(5, client.getStatus().toString());
+            pstmt.setString(6, "not path");
+            pstmt.setString(7, client.getCreated_At().toString());
+            pstmt.executeUpdate();
+            return 1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
     }
 }
 
