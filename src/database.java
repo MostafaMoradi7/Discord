@@ -9,10 +9,10 @@ public class database {
 //        createNewDatabase("projectAP.sqlite");
 //        createTableUser();
 //        createTablePrivateChat();
-       Client client = new Client(0,"messi","123",null,null,Status.DO_NOT_DISTURB);
-        System.out.println(checkLogin(client));
+       Client client = new Client(1,"messi","123",null,null,Status.DO_NOT_DISTURB);
+ //       System.out.println(findUserWithId(client.getClientID()));
 //        checkLogin(client);
-       // listPrivateChat(client);
+        listPrivateChat(client);
     }
 
     /**
@@ -151,6 +151,7 @@ public class database {
         }
         return null;
     }
+    // test done
     public PortableData newPrivateChat(PrivateChat privateChat){
         String sql = "INSERT INTO private_chats(user1,user2) VALUES(?,?)";
         try (Connection conn = this.connect();
@@ -164,19 +165,21 @@ public class database {
         }
         return null;
     }
+    // test done
     public Client findUserWithId(int id){
-        String sql = "SELECT * FROM users WHERE id;";
+        String sql = "SELECT * FROM users WHERE id = ?;";
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             ResultSet rst = pstmt.executeQuery();
-            Client client = new Client(id,rst.getString("username"),rst.getString("password"),rst.getString("email"),
+            return new Client(id,rst.getString("username"),rst.getString("password"),rst.getString("email"),
                     rst.getString("phone_number"),Status.valueOf(rst.getString("status")));
         }catch (Exception e){
             System.out.println(e.getMessage());
         }
         return null;
     }
+    // test done
     public PortableData listPrivateChat(Client client){
         ArrayList<PrivateChat> privateChats=new ArrayList<>();
         String sql = "SELECT * FROM private_chats WHERE client1 = ?;";
@@ -185,12 +188,11 @@ public class database {
             pstmt.setInt(1, client.getClientID());
             ResultSet rst = pstmt.executeQuery();
             while (rst.next()){
-                PrivateChat privateChat = new PrivateChat(client,findUserWithId(rst.getInt("client2")));
-                privateChat.setChatID(rst.getInt("id"));
+                PrivateChat privateChat = new PrivateChat(rst.getInt("id"),client,findUserWithId(rst.getInt("client2")));
                 privateChats.add(privateChat);
             }
         } catch (SQLException e) {
-            System.out.println((Arrays.toString(e.getStackTrace())));
+            System.out.println(e.getMessage());
         }
         String sql2 = "SELECT * FROM private_chats WHERE client2 = ?;";
         try (Connection conn = this.connect();
@@ -198,16 +200,16 @@ public class database {
             pstmt.setInt(1, client.getClientID());
             ResultSet rst = pstmt.executeQuery();
             while (rst.next()){
-                PrivateChat privateChat = new PrivateChat(client,findUserWithId(rst.getInt("client1")));
-                privateChat.setChatID(rst.getInt("id"));
+                PrivateChat privateChat = new PrivateChat(rst.getInt("id"),client,findUserWithId(rst.getInt("client1")));
                 privateChats.add(privateChat);
             }
         } catch (SQLException e) {
-            System.out.println((Arrays.toString(e.getStackTrace())));
+            System.out.println(e.getMessage());
         }
         System.out.println(privateChats);
         return new PortableData("Array list private chat",privateChats);
     }
+    // test done
     public int insertNewUserData(Client client) {
         String sql = "INSERT INTO User(username,password,email,phone_number,status,profile,created_at) VALUES(?,?,?,?,?,?,?)";
         try (Connection conn = this.connect();

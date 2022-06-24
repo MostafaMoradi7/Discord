@@ -7,7 +7,8 @@ public class PrivateChat {
         private Client clientTWO;
         private ArrayList<PrivateChatMessage> messages;
 
-        public PrivateChat(Client clientONE, Client clientTWO) {
+        public PrivateChat(int chatID , Client clientONE, Client clientTWO) {
+            this.chatID = chatID;
             this.clientONE = clientONE;
             this.clientTWO = clientTWO;
             messages = new ArrayList<>();
