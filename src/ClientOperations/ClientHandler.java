@@ -140,6 +140,8 @@ public class ClientHandler implements Runnable {
             }
         }
 
+        ClientInputHandler.setIsRunning(false);
+
         if (!receivedData.getOrder().equals("successful")){
             System.out.println("login failed");
             shutdown();
@@ -149,6 +151,53 @@ public class ClientHandler implements Runnable {
             System.out.println("login successful");
             return client;
         }
+    }
+
+    public Client findClient(){
+        Scanner scanner = new Scanner(System.in);
+        Thread outputThread = new Thread(outputHandler);
+        Thread inputThread = new Thread(inputHandler);
+        System.out.println("Please Enter Required information");
+        System.out.println("clients username: (must be filled!)");
+        String username;
+        do {
+            username = scanner.nextLine();
+            if (username.trim().isEmpty() && Pattern.matches("^[a-zA-Z0-9]*$", username) == false) {
+                System.out.println("please enter a valid username!");
+            }else{
+                break;
+            }
+        }while(true);
+        Client client = new Client(username, null, null, null, null);
+        // DATA IS SENT TO THE SERVER TO FIND THE CLIENT
+        PortableData portableData = new PortableData("find client", client);
+        outputHandler.setPortableData(portableData);
+        outputThread.start();
+
+        //MAKING THE ClientInputHandler ABLE TO RECEIVE THE DATA
+        ClientInputHandler.setIsRunning(true);
+        inputThread.start();
+
+        System.out.println("waiting for server response...");
+        //WAITING FOR THE SERVER TO SEND THE DATA
+        PortableData receivedData;
+        while ((receivedData = inputHandler.getPortableData()) == null) {
+            try {
+
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (receivedData.getOrder().equals("unsuccessful")) {
+            System.out.println("no client found");
+            shutdown();
+            return null;
+        }
+
+        System.out.println("client found");
+        return (Client) receivedData.getObject();
     }
 
 
