@@ -3,33 +3,55 @@ import java.rmi.ServerError;
 import java.time.LocalDateTime;
 
 public class PrivateChatMessage implements Serializable {
-    private String messageID;
-    private Client from;
-    private Client to;
-    private LocalDateTime dateTime;
-    private Object message;
+    private int messageID;
+    private int ChatId;
+    private Client sender;
+    private Client receiver;
+    private String dateTime;
+    private String message;
 
-    public PrivateChatMessage(Client from, Client to, Object message) {
-
-        this.from = from;
-        this.to = to;
+    public PrivateChatMessage(int messageID, int chatId, Client sender, Client receiver, String dateTime, String message) {
+        this.messageID = messageID;
+        ChatId = chatId;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.dateTime = dateTime;
         this.message = message;
-        dateTime = LocalDateTime.now();
+    }
+
+    public int getMessageID() {
+        return messageID;
     }
 
     public Client getFrom() {
-        return from;
+        return sender;
     }
 
     public Client getTo() {
-        return to;
+        return receiver;
     }
 
-    public Object getMessage() {
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public String  getMessage() {
         return message;
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public int getChatId() {
+        return ChatId;
+    }
+
+    @Override
+    public String toString() {
+        return "PrivateChatMessage{" +
+                "messageID=" + messageID +
+                ", ChatId=" + ChatId +
+                ", from=" + sender +
+                ", to=" + receiver +
+                ", dateTime='" + dateTime + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }
