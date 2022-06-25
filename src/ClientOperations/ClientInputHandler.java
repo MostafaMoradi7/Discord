@@ -9,6 +9,7 @@ public class ClientInputHandler implements Runnable{
     private ClientHandler clientHandler;
     private ObjectInputStream reader;
     private PortableData portableData;
+    private static boolean isRunning = true;
 
     public ClientInputHandler(ClientHandler clientHandler, Socket clientSocket){
         this.clientSocket = clientSocket;
@@ -19,10 +20,13 @@ public class ClientInputHandler implements Runnable{
             e.printStackTrace();
         }
     }
+    public static void setIsRunning(boolean isRunning) {
+        ClientInputHandler.isRunning = isRunning;
+    }
     @Override
     public void run() {
         try {
-            while (true){
+            while (isRunning){
                 portableData = (PortableData) reader.readObject();
                 System.out.println(portableData.getObject() + "    " + portableData.getOrder());
                 if (portableData.getOrder().equals("PVMessage"))
