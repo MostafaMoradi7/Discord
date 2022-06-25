@@ -3,7 +3,6 @@ package ClientOperations;
 import MessageOperations.ChannelMessage;
 import MessageOperations.GroupMessage;
 import MessageOperations.PrivateChatMessage;
-import Services.Channel;
 import Services.Group;
 import Services.PrivateChat;
 
@@ -12,6 +11,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class ClientHandler implements Runnable {
 
@@ -51,11 +51,19 @@ public class ClientHandler implements Runnable {
         username = scanner.nextLine();
         System.out.println("*password: ");
         password = scanner.nextLine();
-        System.out.println("*email: ");
-        email = scanner.nextLine();
 
-        System.out.println("phone number: ");
-        phone_Number = scanner.nextLine();
+        // TODO: check if email is valid
+        do {
+            System.out.println("*phone_Number: ");
+            phone_Number = scanner.nextLine();
+        } while (!Pattern.matches("^[0-9]{10}$", phone_Number));
+        // USING REGEX IN ORDER TO VERIFY IF THE PHONE NUMBER IS VALID
+        do {
+            System.out.println("*email: ");
+            email = scanner.nextLine();
+        } while (!Pattern.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", email));
+        // USING REGEX IN ORDER TO VERIFY IF THE EMAIL IS VALID
+
         System.out.println("what kind of status do you prefer?");
         System.out.println("""
                 [1] ONLINE
@@ -83,8 +91,73 @@ public class ClientHandler implements Runnable {
     }
 
 
+    /**
+     * the method that runs the client login service
+     * @return the client object
+     */
+    public Client loginClient() {
+        Thread inputThread = new Thread(inputHandler);
+        Thread outputThread = new Thread(outputHandler);
+        Scanner scanner = new Scanner(System.in);
+        String username, password;
+        System.out.println("Please Enter Required information");
+        System.out.println("fields containing * must be completed. if not enter 'null' to skip.");
+        System.out.println("*username: ");
+        do {
+            username = scanner.nextLine();
+            if (username.trim().isEmpty() && Pattern.matches("^[a-zA-Z0-9]*$", username) == false) {
+                System.out.println("please enter a valid username!");
+            }else{
+                break;
+            }
+        }while (true);
+        System.out.println("*password: ");
+        do {
+            password = scanner.nextLine();
+            if (password.trim().isEmpty() && Pattern.matches("^[a-zA-Z0-9]*$", password) == false) {
+                System.out.println("please enter a valid password!");
+            }else{
+                break;
+            }
+        }while (true);
+
+        Client client = new Client(username, password, null, null, null);
+
+        PortableData portableData = new PortableData("login", client);
+
+        outputHandler.setPortableData(portableData);
+        outputThread.start();
+        inputThread.start();
+
+        System.out.println("waiting for server response...");
+        PortableData receivedData;
+        while ((receivedData = inputHandler.getPortableData()) == null) {
+            try {
+
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!receivedData.getOrder().equals("successful")){
+            System.out.println("login failed");
+            shutdown();
+            //TODO: BETTER TO HAVE AN EXCEPTION HERE.
+            return null;
+        }else{
+            System.out.println("login successful");
+            return client;
+        }
+    }
+
+
     @Override
     public void run() {
+        //---------------------------------THE RECEIVER OF THE MESSAGES AND SENDER ARE GETTING STARTED---------------------------------\\
+        Thread tOUT = new Thread(outputHandler);
+        Thread tIN = new Thread(inputHandler);
+        //----------------------------------------REGISTRATION AND LOG IN-----------------------------------------\\
         System.out.println("""
                 [1] Register client
                 [2] Login client
@@ -92,8 +165,7 @@ public class ClientHandler implements Runnable {
                 """);
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
-        Thread tOUT = new Thread(outputHandler);
-        Thread tIN = new Thread(inputHandler);
+
         tIN.start();
 
         if (choice == 1) {
@@ -133,6 +205,7 @@ public class ClientHandler implements Runnable {
                 """);
         choice = scanner.nextInt();
         //-----------------------------------------------CHOICE #1-----------------------------------------------\\
+        // JUST WITH A SINGLE USERNAME AND AN OPTIONAL EMAIL THE CLIENT WILL BE FOUND BY SERVER.
         if (choice == 1) {
             System.out.println("Enter clients username: ");
             scanner.nextLine();
