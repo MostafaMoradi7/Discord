@@ -4,8 +4,8 @@ import java.net.Socket;
 
 public class Server {
     public static void main(String[] args) {
-        database database = new database();
-        database.main();
+        UserQueries userQueries = new UserQueries();
+        userQueries.main();
 //        try {
 //            ServerSocket serverSocket = new ServerSocket(6500);
 //            System.out.println("server started ...");
