@@ -92,4 +92,19 @@ public class GroupQueries {
         }
         return null;
     }
+    public static int insertNewGroupMessage(GroupMessage groupMessage) {
+        String sql = "INSERT INTO groupMessage(group_id,sender,body,created_At) VALUES(?,?,?,?)";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, groupMessage.getGroupID());
+            pstmt.setInt(2, groupMessage.getFrom().getClientID());
+            pstmt.setString(3, groupMessage.getBody());
+            pstmt.setString(4, groupMessage.getCreated_At());
+            pstmt.executeUpdate();
+            return 1;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
 }
