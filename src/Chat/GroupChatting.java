@@ -11,7 +11,7 @@ import Services.Group;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class GroupChatting extends Chat implements Runnable ,ReadMessage {
+public class GroupChatting extends Chat implements Runnable ,HandleChat, MemberInteraction {
     private ClientHandler clientHandler;
     private Client client;
     private Group group;
@@ -63,39 +63,7 @@ public class GroupChatting extends Chat implements Runnable ,ReadMessage {
                     }
                 } while (true);
                 Client searchingClient = new Client(message, null, null, null, null);
-                PortableData portableData = new PortableData("searchingClient", searchingClient);
-                this.message = null;
-                chatOutputHandler.setPortableData(portableData);
-                chatOutputHandlerThread.start();
-                System.out.println("Waiting for the client to be returned from server");
-                while (this.message == null) {
-
-                }
-                //IF THE OBJECT BODY IS NULL IT MEANS THE CLIENT COULD NOT BE FOUND
-                // ELSE IT HAS BEEN FOUND AND IS READY TO BE ADDED TO THE GROUP
-                if (this.message.getBody() == null) {
-                    System.out.println("The client could not be found");
-                } else {
-                    Client clientToAdd = (Client) this.message.getBody();
-                    group.addMember(clientToAdd);
-                    portableData = new PortableData("new member added", group);
-                    chatOutputHandler.setPortableData(portableData);
-                    chatOutputHandlerThread.start();
-                    this.message = null;
-
-                    while (this.message == null) {
-                        // wait till server listens to the message
-                    }
-                    if (this.message.getBody().equals("successful")) {
-                        System.out.println("The client has been added to the group");
-                    } else {
-                        System.out.println("The client could not be added to the group");
-                    }
-
-                }
-
-                if (this.message != null)
-                    readMessage();
+                addMember(searchingClient);
             }
             /*
             REMOVE MEMBER FROM GROUP
@@ -112,36 +80,7 @@ public class GroupChatting extends Chat implements Runnable ,ReadMessage {
                     }
                 } while (true);
                 Client searchingClient = new Client(message, null, null, null, null);
-                PortableData portableData = new PortableData("searchingClient", searchingClient);
-                this.message = null;
-                chatOutputHandler.setPortableData(portableData);
-                chatOutputHandlerThread.start();
-                System.out.println("Waiting for the client to be returned from server");
-                while (this.message == null) {
-
-                }
-                //IF THE OBJECT BODY IS NULL IT MEANS THE CLIENT COULD NOT BE FOUND
-                // ELSE IT HAS BEEN FOUND AND IS READY TO BE ADDED TO THE GROUP
-                if (this.message.getBody() == null) {
-                    System.out.println("The client could not be found");
-                } else {
-                    Client clientToRemove = (Client) this.message.getBody();
-                    group.removeMember(clientToRemove);
-                    portableData = new PortableData("member removed", group);
-                    chatOutputHandler.setPortableData(portableData);
-                    chatOutputHandlerThread.start();
-                    this.message = null;
-
-                    while (this.message == null) {
-                        // wait till server listens to the message
-                    }
-                    if (this.message.getBody().equals("successful")) {
-                        System.out.println("The client has been removed from the group");
-                    } else {
-                        System.out.println("The client could not be removed from the group");
-                    }
-
-                }
+                removeMember(searchingClient);
             }
             else {
                 GroupMessage groupMessage = new GroupMessage(TypeMVF.TEXT, client, message);
@@ -150,6 +89,8 @@ public class GroupChatting extends Chat implements Runnable ,ReadMessage {
                 chatOutputHandlerThread.start();
 
             }
+            if (this.message != null)
+                readMessage();
         }
     }
 
@@ -159,5 +100,86 @@ public class GroupChatting extends Chat implements Runnable ,ReadMessage {
             System.out.println("**" + ((GroupMessage)message).getFrom().getUsername() + ": " + ((GroupMessage)message).getBody());
             this.message = null;
         }
+    }
+
+    @Override
+    public void endChat() {
+        ChatInputHandler.setIsRunning(false);
+        PortableData portableData = new PortableData("group end", null);
+        chatOutputHandler.setPortableData(portableData);
+        Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
+        chatOutputHandlerThread.start();
+    }
+
+    @Override
+    public void addMember(Client client) {
+        PortableData portableData = new PortableData("searchingClient", client);
+        this.message = null;
+        chatOutputHandler.setPortableData(portableData);
+        Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
+        chatOutputHandlerThread.start();
+        System.out.println("Waiting for the client to be returned from server");
+        while (this.message == null) {
+
+        }
+        //IF THE OBJECT BODY IS NULL IT MEANS THE CLIENT COULD NOT BE FOUND
+        // ELSE IT HAS BEEN FOUND AND IS READY TO BE ADDED TO THE GROUP
+        if (this.message.getBody() == null) {
+            System.out.println("The client could not be found");
+        } else {
+            Client clientToAdd = (Client) this.message.getBody();
+            group.addMember(clientToAdd);
+            portableData = new PortableData("new member added", group);
+            chatOutputHandler.setPortableData(portableData);
+            chatOutputHandlerThread.start();
+            this.message = null;
+
+            while (this.message == null) {
+                // wait till server listens to the message
+            }
+            if (this.message.getBody().equals("successful")) {
+                System.out.println("The client has been added to the group");
+            } else {
+                System.out.println("The client could not be added to the group");
+            }
+
+        }
+
+    }
+
+    @Override
+    public void removeMember(Client client) {
+        PortableData portableData = new PortableData("searchingClient", client);
+        this.message = null;
+        chatOutputHandler.setPortableData(portableData);
+        Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
+        chatOutputHandlerThread.start();
+        System.out.println("Waiting for the client to be returned from server");
+        while (this.message == null) {
+
+        }
+        //IF THE OBJECT BODY IS NULL IT MEANS THE CLIENT COULD NOT BE FOUND
+        // ELSE IT HAS BEEN FOUND AND IS READY TO BE ADDED TO THE GROUP
+        if (this.message.getBody() == null) {
+            System.out.println("The client could not be found");
+        } else {
+            Client clientToRemove = (Client) this.message.getBody();
+            group.removeMember(clientToRemove);
+            portableData = new PortableData("member removed", group);
+            chatOutputHandler.setPortableData(portableData);
+            chatOutputHandlerThread.start();
+            this.message = null;
+
+            while (this.message == null) {
+                // wait till server listens to the message
+            }
+            if (this.message.getBody().equals("successful")) {
+                System.out.println("The client has been removed from the group");
+            } else {
+                System.out.println("The client could not be removed from the group");
+            }
+
+        }
+
     }
 }

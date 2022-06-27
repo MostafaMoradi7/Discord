@@ -69,10 +69,14 @@ public class ClientHandler implements Runnable {
         password = scanner.nextLine();
 
         // TODO: check if email is valid
+        System.out.println("*phone_Number: ");
         do {
-            System.out.println("*phone_Number: ");
             phone_Number = scanner.nextLine();
-        } while (!Pattern.matches("^[0-9]{10}$", phone_Number));
+            if(!(phone_Number.length()<10) || !Pattern.matches("[0-9]+", phone_Number))
+                break;
+            else
+                System.out.println("try again: ");
+        } while (true);
         // USING REGEX IN ORDER TO VERIFY IF THE PHONE NUMBER IS VALID
         do {
             System.out.println("*email: ");

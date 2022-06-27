@@ -7,7 +7,7 @@ import Services.PrivateChat;
 
 import java.util.Scanner;
 
-public class PVChatting extends Chat implements Runnable, ReadMessage{
+public class PVChatting extends Chat implements Runnable, HandleChat{
     private ClientHandler clientHandler;
     private Client client;
     private PrivateChat pvChat;
@@ -31,12 +31,20 @@ public class PVChatting extends Chat implements Runnable, ReadMessage{
         Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
         chatInputHandlerThread.start();
         System.out.println("Type any message to send: ");
+        System.out.println("Type '$back' to go back");
         Scanner scanner = new Scanner(System.in);
         String message;
         while (true) {
             message = scanner.nextLine();
+            if (message.equals("$back")) {
+                endChat();
+                break;
+            }
+
             PrivateChatMessage privateChatMessage = new PrivateChatMessage(TypeMVF.TEXT, client, pvChat.getClientTWO(), message);
             PortableData portableData = new PortableData("pv Message", privateChatMessage);
+
+
             chatOutputHandler.setPortableData(portableData);
             chatOutputHandlerThread.start();
 
@@ -52,5 +60,14 @@ public class PVChatting extends Chat implements Runnable, ReadMessage{
             System.out.println("**" + ((PrivateChatMessage)message).getTo() + ": " + ((PrivateChatMessage)message).getBody());
             message = null;
         }
+    }
+
+    @Override
+    public void endChat() {
+        ChatInputHandler.setIsRunning(false);
+        PortableData portableData = new PortableData("pv end", null);
+        chatOutputHandler.setPortableData(portableData);
+        Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
+        chatOutputHandlerThread.start();
     }
 }
