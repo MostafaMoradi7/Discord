@@ -1,5 +1,6 @@
 package ClientOperations;
 
+import Exceptions.InvalidInput;
 import MessageOperations.ChannelMessage;
 import MessageOperations.GroupMessage;
 import MessageOperations.PrivateChatMessage;
@@ -36,6 +37,10 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    public Socket getClientSocket() {
+        return clientSocket;
+    }
+
     public void setPortableData(PortableData portableData) {
         this.portableData = portableData;
     }
@@ -48,7 +53,18 @@ public class ClientHandler implements Runnable {
         System.out.println("Please Enter Required information");
         System.out.println("fields containing * must be completed. if not enter 'null' to skip.");
         System.out.println("*username: ");
-        username = scanner.nextLine();
+        do {
+            username = scanner.nextLine();
+            if(!(username.length()<6) || !Pattern.matches("[a-zA-Z0-9]+", username)){
+                break;
+            }else {
+                try {
+                    throw new InvalidInput("username must be at least 6 characters and only contain letters and numbers");
+                } catch (InvalidInput e) {
+                    System.out.println("try again: ");
+                }
+            }
+        }while (true);
         System.out.println("*password: ");
         password = scanner.nextLine();
 
