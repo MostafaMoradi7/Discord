@@ -1,0 +1,163 @@
+package Chat;
+
+import ClientOperations.Client;
+import ClientOperations.ClientHandler;
+import ClientOperations.PortableData;
+import MessageOperations.GroupMessage;
+import MessageOperations.PrivateChatMessage;
+import MessageOperations.TypeMVF;
+import Services.Group;
+
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
+public class GroupChatting extends Chat implements Runnable ,ReadMessage {
+    private ClientHandler clientHandler;
+    private Client client;
+    private Group group;
+    private ChatInputHandler chatInputHandler;
+    private ChatOutputHandler chatOutputHandler;
+
+    private boolean admin;
+
+    public GroupChatting(ClientHandler clientHandler, Client client, Group group){
+        this.clientHandler = clientHandler;
+        this.client = client;
+        this.group = group;
+
+        chatInputHandler = new ChatInputHandler(this, clientHandler.getClientSocket());
+        chatOutputHandler = new ChatOutputHandler(this, clientHandler.getClientSocket());
+        if (group.getCreator().getUsername().equals(client.getUsername())) {
+            admin = true;
+        } else {
+            admin = false;
+        }
+    }
+
+    @Override
+    public void run() {
+        System.out.println("GroupChatting is running");
+        Thread chatInputHandlerThread = new Thread(chatInputHandler);
+        Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
+        chatInputHandlerThread.start();
+        System.out.println("Type any message to send: ");
+        if (admin) {
+            System.out.println("You are the creator of this group, you can add members to this group");
+            System.out.println("Type '$addMember' to add a member to this group");
+            System.out.println("Type '$removeMember' to remove a member from this group");
+        }
+
+        Scanner scanner = new Scanner(System.in);
+        String message;
+        while (true) {
+            message = scanner.nextLine();
+            if (admin && message.equals("$addMember")) {
+                System.out.println("Type the username of the member you want to add: ");
+                do {
+                    message = scanner.nextLine();
+                    if (message.equals("$back")) {
+                        break;
+                    }
+                    if (!message.trim().isEmpty() && Pattern.compile("^[a-zA-Z0-9]*$").matcher(message).matches()) {
+                        break;
+                    }
+                } while (true);
+                Client searchingClient = new Client(message, null, null, null, null);
+                PortableData portableData = new PortableData("searchingClient", searchingClient);
+                this.message = null;
+                chatOutputHandler.setPortableData(portableData);
+                chatOutputHandlerThread.start();
+                System.out.println("Waiting for the client to be returned from server");
+                while (this.message == null) {
+
+                }
+                //IF THE OBJECT BODY IS NULL IT MEANS THE CLIENT COULD NOT BE FOUND
+                // ELSE IT HAS BEEN FOUND AND IS READY TO BE ADDED TO THE GROUP
+                if (this.message.getBody() == null) {
+                    System.out.println("The client could not be found");
+                } else {
+                    Client clientToAdd = (Client) this.message.getBody();
+                    group.addMember(clientToAdd);
+                    portableData = new PortableData("new member added", group);
+                    chatOutputHandler.setPortableData(portableData);
+                    chatOutputHandlerThread.start();
+                    this.message = null;
+
+                    while (this.message == null) {
+                        // wait till server listens to the message
+                    }
+                    if (this.message.getBody().equals("successful")) {
+                        System.out.println("The client has been added to the group");
+                    } else {
+                        System.out.println("The client could not be added to the group");
+                    }
+
+                }
+
+                if (this.message != null)
+                    readMessage();
+            }
+            /*
+            REMOVE MEMBER FROM GROUP
+             */
+            else if (admin && message.equals("$removeMember")) {
+                System.out.println("Type the username of the member you want to remove: ");
+                do {
+                    message = scanner.nextLine();
+                    if (message.equals("$back")) {
+                        break;
+                    }
+                    if (!message.trim().isEmpty() && Pattern.compile("^[a-zA-Z0-9]*$").matcher(message).matches()) {
+                        break;
+                    }
+                } while (true);
+                Client searchingClient = new Client(message, null, null, null, null);
+                PortableData portableData = new PortableData("searchingClient", searchingClient);
+                this.message = null;
+                chatOutputHandler.setPortableData(portableData);
+                chatOutputHandlerThread.start();
+                System.out.println("Waiting for the client to be returned from server");
+                while (this.message == null) {
+
+                }
+                //IF THE OBJECT BODY IS NULL IT MEANS THE CLIENT COULD NOT BE FOUND
+                // ELSE IT HAS BEEN FOUND AND IS READY TO BE ADDED TO THE GROUP
+                if (this.message.getBody() == null) {
+                    System.out.println("The client could not be found");
+                } else {
+                    Client clientToRemove = (Client) this.message.getBody();
+                    group.removeMember(clientToRemove);
+                    portableData = new PortableData("member removed", group);
+                    chatOutputHandler.setPortableData(portableData);
+                    chatOutputHandlerThread.start();
+                    this.message = null;
+
+                    while (this.message == null) {
+                        // wait till server listens to the message
+                    }
+                    if (this.message.getBody().equals("successful")) {
+                        System.out.println("The client has been removed from the group");
+                    } else {
+                        System.out.println("The client could not be removed from the group");
+                    }
+
+                }
+            }
+            else {
+                GroupMessage groupMessage = new GroupMessage(TypeMVF.TEXT, client, message);
+                PortableData portableData2 = new PortableData("group Message", groupMessage);
+                chatOutputHandler.setPortableData(portableData2);
+                chatOutputHandlerThread.start();
+
+            }
+        }
+    }
+
+    @Override
+    public void readMessage() {
+        if (((GroupMessage)message) != null && (((GroupMessage)message).getBody() instanceof String)) {
+            System.out.println("**" + ((GroupMessage)message).getFrom().getUsername() + ": " + ((GroupMessage)message).getBody());
+            this.message = null;
+        }
+    }
+}
