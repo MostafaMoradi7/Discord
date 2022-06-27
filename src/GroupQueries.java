@@ -78,15 +78,17 @@ public class GroupQueries {
 
     }
     public static PortableData newGroup(Group group) {
-        String sql = "INSERT INTO groups(creator,name,server_id) VALUES(?,?)";
+        String sql = "INSERT INTO groups(creator,name,server_id,created_At) VALUES(?,?,?,?)";
         try (Connection conn =UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, privateChat.getClientONE().getClientID());
-            pstmt.setInt(2, privateChat.getClientTWO().getClientID());
+            pstmt.setInt(1, group.getCreator().getClientID());
+            pstmt.setString(2, group.getName());
+            pstmt.setInt(3,group.getServerID());
+            pstmt.setString(4,group.getCreated_At());
             pstmt.executeUpdate();
             return new PortableData("ok", null);
         } catch (SQLException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            System.out.println(e.getMessage());
         }
         return null;
     }

@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class UserQueries {
@@ -13,6 +14,8 @@ public class UserQueries {
         //     listPrivateChat(client);
 //        createPrivateChatMessages();
         Client client2 = new Client(2, "slsakfd", "123", "af", "fdsa", Status.DO_NOT_DISTURB);
+        Group group = new Group(null,1,"mostafa",client,null, LocalDateTime.now().toString());
+        GroupQueries.newGroup(group);
        // GroupQueries.createGroupMessageTable();
         //      insertNewUserData(client2);
        // PrivateChatMessage privateChatMessage = new PrivateChatMessage(1, null, null, LocalDateTime.now().toString(), "salam");

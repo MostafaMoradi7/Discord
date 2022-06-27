@@ -1,21 +1,26 @@
 import java.util.ArrayList;
 
 public class Group {
-    private int groupID;
+    private Integer groupID;
     private int serverID;
     private String name;
     private Client creator;
     private GroupMessage pinnedMessage;
+    private String created_At;
     private ArrayList<Client> clients;
     private ArrayList<GroupMessage> messages;
     private ArrayList<Client> admins;
-    public Group(GroupMessage pinnedMessage ,String name, Client creator) {
-        this.pinnedMessage=pinnedMessage;
+
+    public Group(Integer groupID, int serverID, String name, Client creator, GroupMessage pinnedMessage, String created_At) {
+        clients=new ArrayList<>();
+        messages=new ArrayList<>();
+        admins=new ArrayList<>();
+        this.groupID = groupID;
+        this.serverID = serverID;
         this.name = name;
         this.creator = creator;
-        clients = new ArrayList<>();
-        messages = new ArrayList<>();
-        admins = new ArrayList<>();
+        this.pinnedMessage = pinnedMessage;
+        this.created_At = created_At;
     }
 
     public int getGroupID() {
@@ -34,11 +39,23 @@ public class Group {
         return clients;
     }
 
+    public String getCreated_At() {
+        return created_At;
+    }
+
     public ArrayList<GroupMessage> getMessages() {
         return messages;
     }
 
     public ArrayList<Client> getAdmins() {
         return admins;
+    }
+
+    public int getServerID() {
+        return serverID;
+    }
+
+    public GroupMessage getPinnedMessage() {
+        return pinnedMessage;
     }
 }
