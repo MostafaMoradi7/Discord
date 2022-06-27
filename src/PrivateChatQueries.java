@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class PrivateChatQueries {
     //test done
-    public static void createTablePrivateChat() {
+    public static void createTable() {
         Statement stmt = null;
         try {
             Connection conn =UserQueries.connect();

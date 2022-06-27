@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class Group {
     private int groupID;
+    private int serverID;
     private String name;
     private Client creator;
     private GroupMessage pinnedMessage;
