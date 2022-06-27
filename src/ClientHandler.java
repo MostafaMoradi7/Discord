@@ -8,12 +8,10 @@ import java.util.Objects;
 
 
 public class ClientHandler extends Thread {
-    database database;
     Socket client;
 
-    public ClientHandler(Socket client, database database) {
+    public ClientHandler(Socket client) {
         this.client = client;
-        this.database = database;
     }
 
     @Override

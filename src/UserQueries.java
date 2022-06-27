@@ -13,6 +13,7 @@ public class UserQueries {
         //     listPrivateChat(client);
 //        createPrivateChatMessages();
         Client client2 = new Client(2, "slsakfd", "123", "af", "fdsa", Status.DO_NOT_DISTURB);
+        GroupQueries.createTable();
         //      insertNewUserData(client2);
        // PrivateChatMessage privateChatMessage = new PrivateChatMessage(1, null, null, LocalDateTime.now().toString(), "salam");
       //  insertNewMessagePrivateChat(privateChatMessage);
@@ -21,11 +22,6 @@ public class UserQueries {
 //        System.out.println(privateChatMessages.get(1).toString());
     }
 
-    /**
-     * Connect to a sample database
-     *
-     * @param fileName the database file name
-     */
     public static void createNewDatabase(String fileName) {
 
         String url = "jdbc:sqlite:C:\\Users\\Mojtaba\\Desktop\\discord project\\database" + "\\" + fileName;
