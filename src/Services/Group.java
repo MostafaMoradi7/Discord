@@ -26,6 +26,10 @@ public class Group implements Serializable {
         clients.add(client);
     }
 
+    public Client getCreator() {
+        return creator;
+    }
+
     public void removeMember(Client client) {
         clients.remove(client);
     }

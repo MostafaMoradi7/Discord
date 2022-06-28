@@ -29,6 +29,7 @@ public class PVChatting extends Chat implements Runnable, HandleChat{
         System.out.println("PVChatting is running");
         Thread chatInputHandlerThread = new Thread(chatInputHandler);
         Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
+        ChatInputHandler.setIsRunning(true);
         chatInputHandlerThread.start();
         System.out.println("Type any message to send: ");
         System.out.println("Type '$back' to go back");
@@ -65,9 +66,5 @@ public class PVChatting extends Chat implements Runnable, HandleChat{
     @Override
     public void endChat() {
         ChatInputHandler.setIsRunning(false);
-        PortableData portableData = new PortableData("pv end", null);
-        chatOutputHandler.setPortableData(portableData);
-        Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
-        chatOutputHandlerThread.start();
     }
 }

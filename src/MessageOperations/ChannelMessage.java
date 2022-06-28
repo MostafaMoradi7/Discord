@@ -6,20 +6,17 @@ import Services.Type;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ChannelMessage implements Serializable {
+public class ChannelMessage extends Message implements Serializable {
     private String channelName;
-    private String pinnedMessage;
-    private Client mainADMIN;
-    private Type type;
+    private Object body;
+    private Client admin;
     private ArrayList<Client> members;
     private ArrayList<Client> admins;
     private ArrayList<ChannelMessage> messages;
 
-    public ChannelMessage(String channelName, String pinnedMessage, Client mainADMIN, Type type) {
+    public ChannelMessage(String channelName, Object body, Client admin, TypeMVF type) {
+        super(type, admin, body);
         this.channelName = channelName;
-        this.pinnedMessage = pinnedMessage;
-        this.mainADMIN = mainADMIN;
-        this.type = type;
         members = new ArrayList<>();
         admins = new ArrayList<>();
         messages = new ArrayList<>();
@@ -29,12 +26,12 @@ public class ChannelMessage implements Serializable {
         return channelName;
     }
 
-    public String getPinnedMessage() {
-        return pinnedMessage;
+    public Object getBody() {
+        return body;
     }
 
-    public Client getMainADMIN() {
-        return mainADMIN;
+    public Client getAdmin() {
+        return admin;
     }
 
     public ArrayList<Client> getMembers() {

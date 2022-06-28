@@ -1,6 +1,7 @@
 package ClientOperations;
 
 import MessageOperations.PrivateChatMessage;
+import MessageOperations.TypeMVF;
 import Services.Channel;
 import Services.Group;
 import Services.PrivateChat;
@@ -53,7 +54,7 @@ public class ClientOutputHandler implements Runnable{
                     while (!message.contains("$quit")) {
                         message = message.concat(scanner.nextLine());
                     }
-                    PrivateChatMessage privateChatMessage = new PrivateChatMessage(client, pvChat.getClientTWO(), message);
+                    PrivateChatMessage privateChatMessage = new PrivateChatMessage(TypeMVF.TEXT,client, pvChat.getClientTWO(), message);
                     PortableData portableData = new PortableData("PV Message", privateChatMessage);
                     writer.writeObject(portableData);
 

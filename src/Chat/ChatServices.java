@@ -1,5 +1,7 @@
-package ClientOperations;
+package Chat;
 
+import ClientOperations.Client;
+import ClientOperations.ClientHandler;
 import Services.Channel;
 import Services.Group;
 import Services.PrivateChat;

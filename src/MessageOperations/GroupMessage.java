@@ -4,16 +4,19 @@ import ClientOperations.Client;
 
 import java.io.Serializable;
 
-public class GroupMessage implements Serializable {
+public class GroupMessage extends Message implements Serializable {
     private String messageID;
-    private String name;
     private Client from;
     private Object body;
 
-    public GroupMessage(String name, Client from, Object body) {
-        this.name = name;
+    public GroupMessage(TypeMVF type, Client from, Object body) {
+        super(type, from, body);
         this.from = from;
         this.body = body;
+    }
+
+    public Client getFrom() {
+        return from;
     }
 
     public void setMessageID(String messageID) {

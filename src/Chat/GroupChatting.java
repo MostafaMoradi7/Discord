@@ -39,6 +39,7 @@ public class GroupChatting extends Chat implements Runnable ,HandleChat, MemberI
         System.out.println("GroupChatting is running");
         Thread chatInputHandlerThread = new Thread(chatInputHandler);
         Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
+        ChatInputHandler.setIsRunning(true);
         chatInputHandlerThread.start();
         System.out.println("Type any message to send: ");
         if (admin) {
@@ -105,10 +106,6 @@ public class GroupChatting extends Chat implements Runnable ,HandleChat, MemberI
     @Override
     public void endChat() {
         ChatInputHandler.setIsRunning(false);
-        PortableData portableData = new PortableData("group end", null);
-        chatOutputHandler.setPortableData(portableData);
-        Thread chatOutputHandlerThread = new Thread(chatOutputHandler);
-        chatOutputHandlerThread.start();
     }
 
     @Override
