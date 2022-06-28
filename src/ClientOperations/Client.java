@@ -40,39 +40,4 @@ public class Client implements Serializable {
         return username;
     }
 
-    public void setClientID(String clientID) {
-        this.clientID = clientID;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhone_Number() {
-        return phone_Number;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public LocalDateTime getCreated_At() {
-        return created_At;
-    }
-
-    public HashSet<Client> getFriends() {
-        return friends;
-    }
-
-    public HashSet<Client> getBlocked() {
-        return blocked;
-    }
-
-    public String getToken() {
-        return token;
-    }
 }
