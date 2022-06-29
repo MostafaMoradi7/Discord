@@ -1,7 +1,5 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GroupQueries {
@@ -18,9 +16,9 @@ public class GroupQueries {
 
                     " name TEXT NOT NULL, " +
 
-                    " server_id TEXT NOT NULL , " +
+                    " server_id INTEGER NOT NULL , " +
 
-                    " creator TEXT NOT NULL," +
+                    " creator INTEGER NOT NULL," +
 
                     "pinnedMessage TEXT NOT NULL," +
 
@@ -214,5 +212,22 @@ public class GroupQueries {
             System.out.println(e.getMessage());
         }
         return new PortableData("400", null);
+    }
+    public static ArrayList<Group> findGroupForServer(int server_id){
+        ArrayList<Group> groups = new ArrayList<>();
+        String sql = "SELECT * FROM Group WHERE server_id = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, server_id);
+            ResultSet rst = pstmt.executeQuery();
+            while (rst.next()) {
+                groups.add(new Group(rst.getInt("id"),server_id,rst.getString("name"),
+                        UserQueries.findUserWithId(rst.getInt("creator")),null,rst.getString("created_At")));
+            }
+            return groups;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

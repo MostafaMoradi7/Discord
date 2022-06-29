@@ -47,6 +47,34 @@ public class ServerDiscord {
         return created_At;
     }
 
+    public void setServerID(Integer serverID) {
+        this.serverID = serverID;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setMembers(ArrayList<Client> members) {
+        this.members = members;
+    }
+
+    public void setGroups(ArrayList<Group> groups) {
+        this.groups = groups;
+    }
+
+    public void setChannels(ArrayList<Channel> channels) {
+        this.channels = channels;
+    }
+
+    public void setCreator(Client creator) {
+        this.creator = creator;
+    }
+
+    public void setCreated_At(String created_At) {
+        this.created_At = created_At;
+    }
+
     @Override
     public String toString() {
         return "ServerDiscord{" +

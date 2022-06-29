@@ -84,7 +84,8 @@ public class ServerQueries {
         }
         return null;
     }
-        public static PortableData findServers(Client client){
+    //test done   ((all the sever that a client join it just for show ))
+        public static PortableData findServerClient(Client client){
         ArrayList<ServerDiscord> servers = new ArrayList<>();
         String sql = "SELECT * FROM serverMembers WHERE client = ?;";
         try (Connection conn = UserQueries.connect();
@@ -99,5 +100,12 @@ public class ServerQueries {
             e.printStackTrace();
         }
         return new PortableData("something is wrong",null);
+    }
+    public static PortableData allInformationServer(int id){
+        ServerDiscord serverDiscord = findServerWithID(id);
+        if (serverDiscord != null) {
+            serverDiscord.setGroups(GroupQueries.findGroupForServer(id));
+        }
+        return new PortableData("200",serverDiscord);
     }
 }
