@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class GroupQueries {
     //test done
-    public static void createTable() {
+    public static void createTableGroup() {
         Statement stmt = null;
         try {
             Connection conn = UserQueries.connect();
@@ -23,6 +23,41 @@ public class GroupQueries {
                     " creator TEXT NOT NULL," +
 
                     "pinnedMessage TEXT NOT NULL," +
+
+                    " created_At TEXT NOT NULL) ";
+
+            stmt.executeUpdate(sql);
+
+            stmt.close();
+
+            conn.close();
+
+        } catch (Exception e) {
+
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+
+            System.exit(0);
+
+        }
+
+        System.out.println("Table Product Created Successfully!!!");
+
+    }
+    public static void createTableGroupMember() {
+        Statement stmt = null;
+        try {
+            Connection conn = UserQueries.connect();
+            System.out.println("Database Opened...\n");
+            stmt = conn.createStatement();
+            String sql = "CREATE TABLE groupMembers " +
+
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+
+                    " client INTEGER NOT NULL, " +
+
+                    " server_id INTEGER NOT NULL , " +
+
+                    " group_id INTEGER NOT NULL," +
 
                     " created_At TEXT NOT NULL) ";
 
@@ -95,7 +130,7 @@ public class GroupQueries {
         }
         return new PortableData("400", null);
     }
-    public static int insertNewGroupMessage(GroupMessage groupMessage) {
+    public static PortableData  insertNewGroupMessage(GroupMessage groupMessage) {
         String sql = "INSERT INTO groupMessage(group_id,sender,body,created_At) VALUES(?,?,?,?)";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -104,10 +139,10 @@ public class GroupQueries {
             pstmt.setString(3, groupMessage.getBody());
             pstmt.setString(4, groupMessage.getCreated_At());
             pstmt.executeUpdate();
-            return 1;
+            return new PortableData("200",null);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return 0;
+        return new PortableData("400", null);
     }
 }
