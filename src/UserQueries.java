@@ -17,7 +17,7 @@ public class UserQueries {
         Group group = new Group(null,1,"mogtaba",client,null, LocalDateTime.now().toString());
      //   GroupQueries.newGroup(group);
       //  GroupQueries.insertNewGroupMessage(new GroupMessage(null,1,client,"alsdkjf",LocalDateTime.now().toString()));
-        GroupQueries.createTableGroupMember();
+       // GroupQueries.createTableGroupMember();
         // GroupQueries.createGroupMessageTable();
         //      insertNewUserData(client2);
        // PrivateChatMessage privateChatMessage = new PrivateChatMessage(1, null, null, LocalDateTime.now().toString(), "salam");

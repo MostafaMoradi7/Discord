@@ -43,6 +43,7 @@ public class GroupQueries {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+    //test done
     public static void createTableGroupMember() {
         Statement stmt = null;
         try {
@@ -130,6 +131,7 @@ public class GroupQueries {
         }
         return new PortableData("400", null);
     }
+    // test done
     public static PortableData  insertNewGroupMessage(GroupMessage groupMessage) {
         String sql = "INSERT INTO groupMessage(group_id,sender,body,created_At) VALUES(?,?,?,?)";
         try (Connection conn = UserQueries.connect();
@@ -139,6 +141,23 @@ public class GroupQueries {
             pstmt.setString(3, groupMessage.getBody());
             pstmt.setString(4, groupMessage.getCreated_At());
             pstmt.executeUpdate();
+            return new PortableData("200",null);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return new PortableData("400", null);
+    }
+    public static PortableData  insertNewGroupMembers(Group group) {
+        String sql = "INSERT INTO groupMembers(group_id,server_id,client,created_At) VALUES(?,?,?,?)";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (int i=0 ; i<group.getClients().size() ; i++){
+                pstmt.setInt(1, group.getGroupID());
+                pstmt.setInt(2, group.getServerID());
+                pstmt.setInt(3, group.getClients().get(i).getClientID());
+                pstmt.setString(4, group.getCreated_At());
+                pstmt.executeUpdate();
+            }
             return new PortableData("200",null);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
