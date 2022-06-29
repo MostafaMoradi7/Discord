@@ -201,7 +201,7 @@ public class GroupQueries {
         }
         return new PortableData("400", null);
     }
-    //test done   
+    //test done
     public static PortableData  insertNewGroupAdmins(Group group) {
         String sql = "INSERT INTO groupAdmins(group_id,server_id,client,created_At) VALUES(?,?,?,?)";
         try (Connection conn = UserQueries.connect();
