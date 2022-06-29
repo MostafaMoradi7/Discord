@@ -1,5 +1,5 @@
-import java.sql.Connection;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class ServerQueries {
 
@@ -71,7 +71,33 @@ public class ServerQueries {
         System.out.println("Table Product Created Successfully!!!");
 
     }
-    public static void findServers(Client client){
-
+    public static ServerDiscord findServerWithID(int id) {
+        String sql = "SELECT * FROM servers WHERE id = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rst = pstmt.executeQuery();
+            return new ServerDiscord(id, rst.getString("name"), null, null,
+                    null, UserQueries.findUserWithId(rst.getInt("creator")), rst.getString("created_At"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+        public static PortableData findServers(Client client){
+        ArrayList<ServerDiscord> servers = new ArrayList<>();
+        String sql = "SELECT * FROM serverMembers WHERE client = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, client.getClientID());
+            ResultSet rst = pstmt.executeQuery();
+            while (rst.next()) {
+                servers.add(findServerWithID(rst.getInt("server_id")));
+            }
+            return new PortableData("servers",servers);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new PortableData("something is wrong",null);
     }
 }

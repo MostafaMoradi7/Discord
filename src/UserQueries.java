@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class UserQueries {
@@ -15,12 +16,15 @@ public class UserQueries {
 //        createPrivateChatMessages();
         Client client2 = new Client(2, "slsakfd", "123", "af", "fdsa", Status.DO_NOT_DISTURB);
         Group group = new Group(1,1,"mogtaba",client,null, LocalDateTime.now().toString());
+        ArrayList<ServerDiscord> serverDiscords = (ArrayList<ServerDiscord>) ServerQueries.findServers(client).getObject();
+        System.out.println(serverDiscords.get(1).toString());
         group.addMember(client2);
         group.addMember(client);
       //  GroupQueries.createTableGroupAdmin();
      //   GroupQueries.insertNewGroupMembers(group);
-        GroupQueries.createTableGroupAdmin();
-        GroupQueries.createTableGroupMember();
+//        GroupQueries.createTableGroupAdmin();
+//        GroupQueries.createTableGroupMember();
+//        ServerQueries.createTableServerMember();
      //   GroupQueries.newGroup(group);
       //  GroupQueries.insertNewGroupMessage(new GroupMessage(null,1,client,"alsdkjf",LocalDateTime.now().toString()));
        // GroupQueries.createTableGroupMember();

@@ -46,4 +46,17 @@ public class ServerDiscord {
     public String getCreated_At() {
         return created_At;
     }
+
+    @Override
+    public String toString() {
+        return "ServerDiscord{" +
+                "serverID=" + serverID +
+                ", name='" + name + '\'' +
+                ", members=" + members +
+                ", groups=" + groups +
+                ", channels=" + channels +
+                ", creator=" + creator +
+                ", created_At='" + created_At + '\'' +
+                '}';
+    }
 }
