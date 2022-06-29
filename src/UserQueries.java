@@ -18,7 +18,9 @@ public class UserQueries {
         group.addMember(client2);
         group.addMember(client);
       //  GroupQueries.createTableGroupAdmin();
-        GroupQueries.insertNewGroupMembers(group);
+     //   GroupQueries.insertNewGroupMembers(group);
+        GroupQueries.createTableGroupAdmin();
+        GroupQueries.createTableGroupMember();
      //   GroupQueries.newGroup(group);
       //  GroupQueries.insertNewGroupMessage(new GroupMessage(null,1,client,"alsdkjf",LocalDateTime.now().toString()));
        // GroupQueries.createTableGroupMember();

@@ -56,8 +56,6 @@ public class GroupQueries {
 
                     " client INTEGER NOT NULL, " +
 
-                    " server_id INTEGER NOT NULL , " +
-
                     " group_id INTEGER NOT NULL," +
 
                     " created_At TEXT NOT NULL) ";
@@ -91,8 +89,6 @@ public class GroupQueries {
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
 
                     " client INTEGER NOT NULL, " +
-
-                    " server_id INTEGER NOT NULL , " +
 
                     " group_id INTEGER NOT NULL," +
 
