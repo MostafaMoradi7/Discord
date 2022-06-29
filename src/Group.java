@@ -12,9 +12,9 @@ public class Group {
     private ArrayList<Client> admins;
 
     public Group(Integer groupID, int serverID, String name, Client creator, GroupMessage pinnedMessage, String created_At) {
-        clients=new ArrayList<>();
-        messages=new ArrayList<>();
-        admins=new ArrayList<>();
+        clients = new ArrayList<>();
+        messages = new ArrayList<>();
+        admins = new ArrayList<>();
         this.groupID = groupID;
         this.serverID = serverID;
         this.name = name;
@@ -57,5 +57,12 @@ public class Group {
 
     public GroupMessage getPinnedMessage() {
         return pinnedMessage;
+    }
+
+    public void addMember(Client client) {
+        clients.add(client);
+    }
+    public void addAdmin(Client client) {
+        admins.add(client);
     }
 }
