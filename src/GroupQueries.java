@@ -5,6 +5,7 @@ import java.sql.Statement;
 import java.util.Arrays;
 
 public class GroupQueries {
+    //test done
     public static void createTable() {
         Statement stmt = null;
         try {
@@ -42,6 +43,7 @@ public class GroupQueries {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+    // test done
     public static void createGroupMessageTable() {
         Statement stmt = null;
         try {
@@ -77,6 +79,7 @@ public class GroupQueries {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+    //test done
     public static PortableData newGroup(Group group) {
         String sql = "INSERT INTO groups(creator,name,server_id,created_At) VALUES(?,?,?,?)";
         try (Connection conn =UserQueries.connect();
@@ -86,11 +89,11 @@ public class GroupQueries {
             pstmt.setInt(3,group.getServerID());
             pstmt.setString(4,group.getCreated_At());
             pstmt.executeUpdate();
-            return new PortableData("ok", null);
+            return new PortableData("200", null);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return new PortableData("400", null);
     }
     public static int insertNewGroupMessage(GroupMessage groupMessage) {
         String sql = "INSERT INTO groupMessage(group_id,sender,body,created_At) VALUES(?,?,?,?)";

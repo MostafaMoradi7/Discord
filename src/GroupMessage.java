@@ -1,11 +1,11 @@
 public class GroupMessage {
-    private int messageID;
+    private Integer messageID;
     private int GroupID;
     private Client from;
     private String body;
     private String created_At;
 
-    public GroupMessage(int messageID, int groupID, Client from, String body,String created_At) {
+    public GroupMessage(Integer messageID, int groupID, Client from, String body,String created_At) {
         this.messageID = messageID;
         GroupID = groupID;
         this.from = from;
