@@ -1,15 +1,21 @@
 import ClientOperations.Client;
 import ClientOperations.ClientHandler;
+import Server.Server;
 
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Main {
-
+    public static boolean loggedIn = false;
     public static void main(String[] args) {
         ClientHandler clientHandler = new ClientHandler();
 
         if (login(clientHandler)){
             System.out.println("Login successful");
+            loggedIn = true;
+        }else{
+            System.out.println("Login failed");
+            loggedIn = false;
         }
 
 
@@ -50,6 +56,25 @@ public class Main {
             }
         }
         return true;
+    }
+
+    public static void logout(ClientHandler clientHandler) {
+        clientHandler.shutdown();
+        loggedIn = false;
+        System.exit(0);
+    }
+
+    public static void createServer(ClientHandler clientHandler){
+        System.out.println("please enter a name for your server: ");
+        Scanner scanner = new Scanner(System.in);
+        String name;
+        do {
+            name = scanner.nextLine();
+            if (name.trim().isEmpty() || !Pattern.matches())
+                System.out.println("invalid input");
+        }while (true);
+        Server newServer = new Server(clientHandler.returnMainClient(), clientHandler);
+
     }
 
 }

@@ -102,12 +102,24 @@ public class ClientHandler implements Runnable {
             status = Status.INVISIBLE;
         } else
             status = null;
-
         client = new Client(username, password, email, phone_Number, status);
-
-
-        return client;
-
+        ClientOutputHandler outputHandler = new ClientOutputHandler(clientSocket, client);
+        ClientInputHandler inputHandler = new ClientInputHandler(this, clientSocket);
+        PortableData portableData = new PortableData("register", client);
+        outputHandler.setPortableData(portableData);
+        this.outputHandler = null;
+        Thread outThread = new Thread(outputHandler);
+        outThread.start();
+        Thread inThread = new Thread(inputHandler);
+        inThread.start();
+        PortableData response = null;
+        while ((response = inputHandler.getPortableData()) == null){
+            // wait till respond is sent
+        }
+        if (response.getOrder().equals("successful"))
+            return this.client = (Client) response.getObject();
+        else
+            return null;
     }
 
 
@@ -169,7 +181,8 @@ public class ClientHandler implements Runnable {
             return null;
         }else{
             System.out.println("login successful");
-            return client;
+            return this.client = (Client) receivedData.getObject();
+
         }
     }
 
@@ -224,242 +237,246 @@ public class ClientHandler implements Runnable {
 
     }
 
-
     @Override
-    public void run() {
-        //---------------------------------THE RECEIVER OF THE MESSAGES AND SENDER ARE GETTING STARTED---------------------------------\\
-        Thread tOUT = new Thread(outputHandler);
-        Thread tIN = new Thread(inputHandler);
-        //----------------------------------------REGISTRATION AND LOG IN-----------------------------------------\\
-        System.out.println("""
-                [1] Register client
-                [2] Login client
-                [3] Exit
-                """);
-        Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+    public void run(){
 
-        tIN.start();
-
-        if (choice == 1) {
-            this.client = registerClient();
-            PortableData portableData = new PortableData("registration", this.client);
-            outputHandler.setPortableData(portableData);
-            tOUT.start();
-
-        } else if (choice == 2) {
-            scanner.nextLine();
-            System.out.println("Enter your Username: ");
-            String username = scanner.nextLine();
-            System.out.println("Enter your password: ");
-            String password = scanner.nextLine();
-            PortableData portableData = new PortableData("login", new Client(username, password, null, null, null));
-            outputHandler.setPortableData(portableData);
-            tOUT.start();
-
-            if (inputHandler.getPortableData().getOrder().equals("successful")) {
-                this.client = (Client) inputHandler.getPortableData().getObject();
-                System.out.println("Logged in successfully");
-            } else {
-                System.out.println("Can not log in, please try again later... !");
-            }
-        } else {
-            shutdown();
-        }
-
-        //----------------------------------------WORKING WITH APPLICATION-----------------------------------------\\
-
-        System.out.println("""
-                [1] find user
-                [2] new private chat
-                [3] group chat
-                [4] channels
-                [5] logout
-                """);
-        choice = scanner.nextInt();
-        //-----------------------------------------------CHOICE #1-----------------------------------------------\\
-        // JUST WITH A SINGLE USERNAME AND AN OPTIONAL EMAIL THE CLIENT WILL BE FOUND BY SERVER.
-        if (choice == 1) {
-            System.out.println("Enter clients username: ");
-            scanner.nextLine();
-            String username = scanner.nextLine();
-            System.out.println("Enter clients email: ");
-            String email = scanner.nextLine();
-            Client target = new Client(username, null, email, null, null);
-            PortableData targetFind = new PortableData("find client", target);
-            outputHandler.setPortableData(targetFind);
-
-            tOUT.start();
-
-
-            if (inputHandler.getPortableData().getOrder().equals("successful")) {
-                //TODO: HANDLE WORKING WITH THE FOUNDED CLIENT
-            } else {
-                System.out.println("NO CLIENT FOUND WITH THIS INFORMATION!");
-            }
-        }
-        //-----------------------------------------------CHOICE #2-----------------------------------------------\\
-        else if (choice == 2) {
-            System.out.println("""
-                    [1] new private chat
-                    [2] chat lists
-                    [3] back
-                    """);
-            choice = scanner.nextInt();
-            if (choice == 1) {
-                System.out.println("Enter the username you're looking for:");
-                scanner.nextLine();
-                String username = scanner.nextLine();
-                Client lookingClient = new Client(username, null, null, null, null);
-                PortableData portableData = new PortableData("find and return client", lookingClient);
-                outputHandler.setPortableData(portableData);
-                tOUT.start();
-                PortableData receivedData;
-                while ((receivedData = inputHandler.getPortableData()) != null) {
-                    //TODO: wait till server sends required info
-                }
-                if (receivedData.getOrder().equals("successful")) {
-                    lookingClient = (Client) receivedData.getObject();
-                    PrivateChat privateChat = new PrivateChat(this.client, lookingClient);
-                    PortableData portableData1 = new PortableData("create a new private chat", privateChat);
-                    outputHandler.setPortableData(portableData1);
-                    tOUT.start();
-
-
-                    while ((receivedData = inputHandler.getPortableData()) != null) {
-                        //TODO: wait till server sends required info
-                    }
-                    if (receivedData.getOrder().equals("successful")) {
-                        System.out.println("You can find this chat in your chat lists.");
-                    } else {
-                        System.out.println("Can't create this chat now, please try again later!");
-                    }
-                } else {
-                    System.out.println("NO SUCH CLIENT FOUND!");
-                }
-
-            } else if (choice == 2) {
-                PortableData portableData = new PortableData("clients private chat lists", this.client);
-                outputHandler.setPortableData(portableData);
-                tOUT.start();
-
-                PortableData receivedData;
-                while ((receivedData = inputHandler.getPortableData()) != null) {
-                    //TODO: wait till server sends required info
-                }
-                /*
-                      AN ARRAYLIST OF CLIENTS WILL BE SENT
-                        IF THERE IS NO PRIVATE CHAT WITH THIS CLIENT
-                        THEN THE SERVER WILL SEND NULL
-                                                                        */
-                if (receivedData.getOrder().equals("successful")) {
-                    ArrayList<PrivateChat> privateChats = (ArrayList<PrivateChat>) receivedData.getObject();
-                    if (privateChats.size() == 0) {
-                        System.out.println("You have no private chats!");
-                    } else {
-                        System.out.println("Choose a private chat to work with:");
-                        for (int i = 0; i < privateChats.size(); i++) {
-                            System.out.println("[" + (i + 1) + "] " + privateChats.get(i).getClientONE().getUsername() + " and " + privateChats.get(i).getClientTWO().getUsername());
-                        }
-                        choice = scanner.nextInt();
-                        if (choice > 0 && choice <= privateChats.size()) {
-                            PortableData portableData1 = new PortableData("return private chat", privateChats.get(choice - 1));
-                            outputHandler.setPortableData(portableData1);
-                            tOUT.start();
-
-                            while ((receivedData = inputHandler.getPortableData()) != null) {
-                                //TODO: wait till server sends required info
-                            }
-                            if (receivedData.getOrder().equals("successful")) {
-                                PrivateChat privateChat = (PrivateChat) receivedData.getObject();
-                                //QUESTION: HOW TO SHOW NEW MESSAGES?
-                                outputHandler.setPvChat(privateChat);
-                                tOUT.start();
-
-
-                            } else {
-                                System.out.println("Wrong choice!");
-                            }
-                        } else {
-                            System.out.println("something went wrong! please try again later.");
-                            //TODO: HANDLE THE EXCEPTION
-                        }
-
-                    }
-                }
-            }
-        }
-        //-----------------------------------------------CHOICE #3-----------------------------------------------\\
-        else if (choice == 3) {
-            System.out.println("""
-                    [1] new group chat
-                    [2] chat lists
-                    [3] back
-                    """);
-            choice = scanner.nextInt();
-
-            if (choice == 1) {
-                System.out.println("Enter group name: ");
-                scanner.nextLine();
-                String groupName = scanner.nextLine();
-                Group group = new Group(groupName, this.client);
-                PortableData portableData = new PortableData("create a new group", group);
-                outputHandler.setPortableData(portableData);
-                tOUT.start();
-
-                PortableData receivedData;
-                while ((receivedData = inputHandler.getPortableData()) != null) {
-                    // TODO: wait till server sends required info
-                }
-                if (receivedData.getOrder().equals("successful")) {
-                    System.out.println("You can find this group in your Group Chat lists.");
-                } else {
-                    System.out.println("Can't create this group now, please try again later!");
-                }
-            } else if (choice == 2) {
-                PortableData portableData = new PortableData("clients group chat lists", this.client);
-                outputHandler.setPortableData(portableData);
-                tOUT.start();
-
-                PortableData receivedData;
-                while ((receivedData = inputHandler.getPortableData()) != null) {
-                    //TODO: wait till server sends required info
-                }
-                /*
-                      AN ARRAYLIST OF Groups WILL BE SENT
-                        IF THERE IS NO Group CHAT WITH THIS CLIENT
-                        THEN THE SERVER WILL SEND NULL
-                                                                        */
-                if (receivedData.getOrder().equals("successful")) {
-                    ArrayList<Group> groups = (ArrayList<Group>) receivedData.getObject();
-                    if (groups.size() == 0) {
-                        System.out.println("You have no group chats!");
-                    } else {
-                        System.out.println("Choose a group chat to work with:");
-                        for (int i = 0; i < groups.size(); i++) {
-                            System.out.println("[" + (i + 1) + "] " + groups.get(i).getGroupName());
-                        }
-                        choice = scanner.nextInt();
-                        if (choice > 0 && choice <= groups.size()) {
-                            PortableData portableData1 = new PortableData("return group chat", groups.get(choice - 1));
-                            outputHandler.setPortableData(portableData1);
-                            tOUT.start();
-
-                            while ((receivedData = inputHandler.getPortableData()) != null) {
-                                //TODO: wait till server sends required info
-                            }
-                            if (receivedData.getOrder().equals("successful")) {
-                                Group group = (Group) receivedData.getObject();
-                                //QUESTION: HOW TO SHOW NEW MESSAGES?
-                                outputHandler.setGapChat(group);
-                                tOUT.start();
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
+
+//    @Override
+//    public void run() {
+//        //---------------------------------THE RECEIVER OF THE MESSAGES AND SENDER ARE GETTING STARTED---------------------------------\\
+//        Thread tOUT = new Thread(outputHandler);
+//        Thread tIN = new Thread(inputHandler);
+//        //----------------------------------------REGISTRATION AND LOG IN-----------------------------------------\\
+//        System.out.println("""
+//                [1] Register client
+//                [2] Login client
+//                [3] Exit
+//                """);
+//        Scanner scanner = new Scanner(System.in);
+//        int choice = scanner.nextInt();
+//
+//        tIN.start();
+//
+//        if (choice == 1) {
+//            this.client = registerClient();
+//            PortableData portableData = new PortableData("registration", this.client);
+//            outputHandler.setPortableData(portableData);
+//            tOUT.start();
+//
+//        } else if (choice == 2) {
+//            scanner.nextLine();
+//            System.out.println("Enter your Username: ");
+//            String username = scanner.nextLine();
+//            System.out.println("Enter your password: ");
+//            String password = scanner.nextLine();
+//            PortableData portableData = new PortableData("login", new Client(username, password, null, null, null));
+//            outputHandler.setPortableData(portableData);
+//            tOUT.start();
+//
+//            if (inputHandler.getPortableData().getOrder().equals("successful")) {
+//                this.client = (Client) inputHandler.getPortableData().getObject();
+//                System.out.println("Logged in successfully");
+//            } else {
+//                System.out.println("Can not log in, please try again later... !");
+//            }
+//        } else {
+//            shutdown();
+//        }
+//
+//        //----------------------------------------WORKING WITH APPLICATION-----------------------------------------\\
+//
+//        System.out.println("""
+//                [1] find user
+//                [2] new private chat
+//                [3] group chat
+//                [4] channels
+//                [5] logout
+//                """);
+//        choice = scanner.nextInt();
+//        //-----------------------------------------------CHOICE #1-----------------------------------------------\\
+//        // JUST WITH A SINGLE USERNAME AND AN OPTIONAL EMAIL THE CLIENT WILL BE FOUND BY SERVER.
+//        if (choice == 1) {
+//            System.out.println("Enter clients username: ");
+//            scanner.nextLine();
+//            String username = scanner.nextLine();
+//            System.out.println("Enter clients email: ");
+//            String email = scanner.nextLine();
+//            Client target = new Client(username, null, email, null, null);
+//            PortableData targetFind = new PortableData("find client", target);
+//            outputHandler.setPortableData(targetFind);
+//
+//            tOUT.start();
+//
+//
+//            if (inputHandler.getPortableData().getOrder().equals("successful")) {
+//                //TODO: HANDLE WORKING WITH THE FOUNDED CLIENT
+//            } else {
+//                System.out.println("NO CLIENT FOUND WITH THIS INFORMATION!");
+//            }
+//        }
+//        //-----------------------------------------------CHOICE #2-----------------------------------------------\\
+//        else if (choice == 2) {
+//            System.out.println("""
+//                    [1] new private chat
+//                    [2] chat lists
+//                    [3] back
+//                    """);
+//            choice = scanner.nextInt();
+//            if (choice == 1) {
+//                System.out.println("Enter the username you're looking for:");
+//                scanner.nextLine();
+//                String username = scanner.nextLine();
+//                Client lookingClient = new Client(username, null, null, null, null);
+//                PortableData portableData = new PortableData("find and return client", lookingClient);
+//                outputHandler.setPortableData(portableData);
+//                tOUT.start();
+//                PortableData receivedData;
+//                while ((receivedData = inputHandler.getPortableData()) != null) {
+//                    //TODO: wait till server sends required info
+//                }
+//                if (receivedData.getOrder().equals("successful")) {
+//                    lookingClient = (Client) receivedData.getObject();
+//                    PrivateChat privateChat = new PrivateChat(this.client, lookingClient);
+//                    PortableData portableData1 = new PortableData("create a new private chat", privateChat);
+//                    outputHandler.setPortableData(portableData1);
+//                    tOUT.start();
+//
+//
+//                    while ((receivedData = inputHandler.getPortableData()) != null) {
+//                        //TODO: wait till server sends required info
+//                    }
+//                    if (receivedData.getOrder().equals("successful")) {
+//                        System.out.println("You can find this chat in your chat lists.");
+//                    } else {
+//                        System.out.println("Can't create this chat now, please try again later!");
+//                    }
+//                } else {
+//                    System.out.println("NO SUCH CLIENT FOUND!");
+//                }
+//
+//            } else if (choice == 2) {
+//                PortableData portableData = new PortableData("clients private chat lists", this.client);
+//                outputHandler.setPortableData(portableData);
+//                tOUT.start();
+//
+//                PortableData receivedData;
+//                while ((receivedData = inputHandler.getPortableData()) != null) {
+//                    //TODO: wait till server sends required info
+//                }
+//                /*
+//                      AN ARRAYLIST OF CLIENTS WILL BE SENT
+//                        IF THERE IS NO PRIVATE CHAT WITH THIS CLIENT
+//                        THEN THE SERVER WILL SEND NULL
+//                                                                        */
+//                if (receivedData.getOrder().equals("successful")) {
+//                    ArrayList<PrivateChat> privateChats = (ArrayList<PrivateChat>) receivedData.getObject();
+//                    if (privateChats.size() == 0) {
+//                        System.out.println("You have no private chats!");
+//                    } else {
+//                        System.out.println("Choose a private chat to work with:");
+//                        for (int i = 0; i < privateChats.size(); i++) {
+//                            System.out.println("[" + (i + 1) + "] " + privateChats.get(i).getClientONE().getUsername() + " and " + privateChats.get(i).getClientTWO().getUsername());
+//                        }
+//                        choice = scanner.nextInt();
+//                        if (choice > 0 && choice <= privateChats.size()) {
+//                            PortableData portableData1 = new PortableData("return private chat", privateChats.get(choice - 1));
+//                            outputHandler.setPortableData(portableData1);
+//                            tOUT.start();
+//
+//                            while ((receivedData = inputHandler.getPortableData()) != null) {
+//                                //TODO: wait till server sends required info
+//                            }
+//                            if (receivedData.getOrder().equals("successful")) {
+//                                PrivateChat privateChat = (PrivateChat) receivedData.getObject();
+//                                //QUESTION: HOW TO SHOW NEW MESSAGES?
+//                                outputHandler.setPvChat(privateChat);
+//                                tOUT.start();
+//
+//
+//                            } else {
+//                                System.out.println("Wrong choice!");
+//                            }
+//                        } else {
+//                            System.out.println("something went wrong! please try again later.");
+//                            //TODO: HANDLE THE EXCEPTION
+//                        }
+//
+//                    }
+//                }
+//            }
+//        }
+//        //-----------------------------------------------CHOICE #3-----------------------------------------------\\
+//        else if (choice == 3) {
+//            System.out.println("""
+//                    [1] new group chat
+//                    [2] chat lists
+//                    [3] back
+//                    """);
+//            choice = scanner.nextInt();
+//
+//            if (choice == 1) {
+//                System.out.println("Enter group name: ");
+//                scanner.nextLine();
+//                String groupName = scanner.nextLine();
+//                Group group = new Group(groupName, this.client);
+//                PortableData portableData = new PortableData("create a new group", group);
+//                outputHandler.setPortableData(portableData);
+//                tOUT.start();
+//
+//                PortableData receivedData;
+//                while ((receivedData = inputHandler.getPortableData()) != null) {
+//                    // TODO: wait till server sends required info
+//                }
+//                if (receivedData.getOrder().equals("successful")) {
+//                    System.out.println("You can find this group in your Group Chat lists.");
+//                } else {
+//                    System.out.println("Can't create this group now, please try again later!");
+//                }
+//            } else if (choice == 2) {
+//                PortableData portableData = new PortableData("clients group chat lists", this.client);
+//                outputHandler.setPortableData(portableData);
+//                tOUT.start();
+//
+//                PortableData receivedData;
+//                while ((receivedData = inputHandler.getPortableData()) != null) {
+//                    //TODO: wait till server sends required info
+//                }
+//                /*
+//                      AN ARRAYLIST OF Groups WILL BE SENT
+//                        IF THERE IS NO Group CHAT WITH THIS CLIENT
+//                        THEN THE SERVER WILL SEND NULL
+//                                                                        */
+//                if (receivedData.getOrder().equals("successful")) {
+//                    ArrayList<Group> groups = (ArrayList<Group>) receivedData.getObject();
+//                    if (groups.size() == 0) {
+//                        System.out.println("You have no group chats!");
+//                    } else {
+//                        System.out.println("Choose a group chat to work with:");
+//                        for (int i = 0; i < groups.size(); i++) {
+//                            System.out.println("[" + (i + 1) + "] " + groups.get(i).getGroupName());
+//                        }
+//                        choice = scanner.nextInt();
+//                        if (choice > 0 && choice <= groups.size()) {
+//                            PortableData portableData1 = new PortableData("return group chat", groups.get(choice - 1));
+//                            outputHandler.setPortableData(portableData1);
+//                            tOUT.start();
+//
+//                            while ((receivedData = inputHandler.getPortableData()) != null) {
+//                                //TODO: wait till server sends required info
+//                            }
+//                            if (receivedData.getOrder().equals("successful")) {
+//                                Group group = (Group) receivedData.getObject();
+//                                //QUESTION: HOW TO SHOW NEW MESSAGES?
+//                                outputHandler.setGapChat(group);
+//                                tOUT.start();
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     /**
      *SHUTS DOWN THE WHOLE SYSTEM FOR CLIENT
@@ -488,5 +505,9 @@ public class ClientHandler implements Runnable {
     public void receiveGapMessage(PortableData newMessage){
         GroupMessage groupMessage = (GroupMessage) newMessage.getObject();
         gapMessages.get(groupMessage);
+    }
+
+    public Client returnMainClient(){
+        return this.client;
     }
 }

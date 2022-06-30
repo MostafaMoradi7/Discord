@@ -52,4 +52,8 @@ public class Client implements Serializable {
     public void removeServer(Server server) {
         servers.remove(server);
     }
+
+    public boolean serverExists(){
+        return !servers.isEmpty();
+    }
 }

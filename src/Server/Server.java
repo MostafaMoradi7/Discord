@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class Server extends Chat implements Runnable{
     private Client mainCreator;
     private ClientHandler clientHandler;
+    private String serverName;
     private ArrayList<Client> members;
     private ArrayList<Client> admins;
     private ArrayList<Client> bannedClients;
@@ -23,7 +24,7 @@ public class Server extends Chat implements Runnable{
     private ChatInputHandler chatInputHandler;
 
 
-    public Server(Client mainCreator, ClientHandler clientHandler) {
+    public Server(Client mainCreator, ClientHandler clientHandler, String serverName) {
         this.mainCreator = mainCreator;
         members = new ArrayList<>();
         admins = new ArrayList<>();
@@ -32,7 +33,7 @@ public class Server extends Chat implements Runnable{
         channels = new ArrayList<>();
         members.add(mainCreator);
         admins.add(mainCreator);
-
+        this.serverName = serverName;
         chatOutputHandler = new ChatOutputHandler(this, clientHandler.getClientSocket());
         chatInputHandler = new ChatInputHandler(this, clientHandler.getClientSocket());
     }
