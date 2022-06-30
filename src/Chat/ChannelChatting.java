@@ -212,6 +212,7 @@ public class ChannelChatting extends Chat implements Runnable, HandleChat, Membe
     public void readMessage() {
         if (message != null && message.getBody() instanceof String){
             System.out.println("**" + ((ChannelMessage)message).getAdmin() +": " + ((ChannelMessage)message).getBody());
+            channel.addMessage((ChannelMessage) message.getBody());
             message = null;
         }
     }

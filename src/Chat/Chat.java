@@ -16,5 +16,6 @@ public class Chat implements Runnable{
 
     protected void receiveMessage(Object message){
         this.message = (Message) message;
+
     }
 }

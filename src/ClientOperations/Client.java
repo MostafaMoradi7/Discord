@@ -1,7 +1,10 @@
 package ClientOperations;
 
+import Server.Server;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 
@@ -18,6 +21,8 @@ public class Client implements Serializable {
     private Status status;
     // TODO: HANDLE A PHOTO
     private LocalDateTime created_At;
+
+    private ArrayList<Server> servers;
 
     //  CLIENT HAS A LIST OF FRIENDS:
     private HashSet<Client> friends;
@@ -40,4 +45,11 @@ public class Client implements Serializable {
         return username;
     }
 
+    public void addServer(Server server) {
+        servers.add(server);
+    }
+
+    public void removeServer(Server server) {
+        servers.remove(server);
+    }
 }

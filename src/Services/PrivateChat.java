@@ -30,4 +30,8 @@ public class PrivateChat implements Serializable {
     public void setChatID(String chatID) {
         this.chatID = chatID;
     }
+
+    public void addMessage(PrivateChatMessage message) {
+        messages.add(message);
+    }
 }

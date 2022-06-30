@@ -59,6 +59,7 @@ public class PVChatting extends Chat implements Runnable, HandleChat{
     public void readMessage() {
         if (message != null && (((PrivateChatMessage)message).getBody() instanceof String)) {
             System.out.println("**" + ((PrivateChatMessage)message).getTo() + ": " + ((PrivateChatMessage)message).getBody());
+            pvChat.addMessage((PrivateChatMessage)message);
             message = null;
         }
     }

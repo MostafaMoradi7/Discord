@@ -8,6 +8,7 @@ import MessageOperations.PrivateChatMessage;
 import MessageOperations.TypeMVF;
 import Services.Group;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ public class GroupChatting extends Chat implements Runnable ,HandleChat, MemberI
     private Group group;
     private ChatInputHandler chatInputHandler;
     private ChatOutputHandler chatOutputHandler;
+    private ArrayList<GroupMessage> groupMessages;
 
     private boolean admin;
 
@@ -145,7 +147,7 @@ public class GroupChatting extends Chat implements Runnable ,HandleChat, MemberI
     }
 
     @Override
-    public void removeMember(Client client) {
+    public synchronized void removeMember(Client client) {
         PortableData portableData = new PortableData("searchingClient", client);
         this.message = null;
         chatOutputHandler.setPortableData(portableData);
@@ -178,5 +180,9 @@ public class GroupChatting extends Chat implements Runnable ,HandleChat, MemberI
 
         }
 
+    }
+
+    public void addMessage(GroupMessage groupMessage) {
+        this.groupMessages.add(groupMessage);
     }
 }

@@ -50,5 +50,9 @@ public class Group implements Serializable {
         return name;
     }
 
+    public void addMessage(GroupMessage message) {
+        messages.add(message);
+    }
+
 
 }

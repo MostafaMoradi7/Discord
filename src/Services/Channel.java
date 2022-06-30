@@ -1,6 +1,7 @@
 package Services;
 
 import ClientOperations.Client;
+import MessageOperations.ChannelMessage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class Channel implements Serializable {
     private ArrayList<Client> admins;
     private ArrayList<Client> bannedClients;
     private Client creator;
+    private ArrayList<ChannelMessage> messages;
 
     public Channel(String channelID, String channelName, Client creator) {
         this.channelID = channelID;
@@ -70,6 +72,9 @@ public Client getCreator() {
         bannedClients.remove(client);
     }
 
+    public void addMessage(ChannelMessage message) {
+        messages.add(message);
+    }
 
 
 }

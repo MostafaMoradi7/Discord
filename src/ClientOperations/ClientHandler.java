@@ -220,6 +220,10 @@ public class ClientHandler implements Runnable {
         return (Client) receivedData.getObject();
     }
 
+    public void createServer(){
+
+    }
+
 
     @Override
     public void run() {
