@@ -260,7 +260,7 @@ public class Main {
         if (inCreator) {
             System.out.println("""
                     [$delete-server] delete server
-                    [$create-channel] new channel 
+                    [$create-channel] new channel
                     [$create-group] new group 
                     [$delete-channel] delete channel 
                     [$delete-group] delete group 
@@ -273,6 +273,7 @@ public class Main {
                     [$kick] kick a user out
                     [$ban] ban a user
                     [$unban] unban a user
+                   
                     """);
         }
 
