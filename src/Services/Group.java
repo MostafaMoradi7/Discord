@@ -14,12 +14,13 @@ public class Group implements Serializable {
     private ArrayList<GroupMessage> messages;
     private ArrayList<Client> admins;
 
-    public Group(String name, Client creator) {
+    public Group(String groupID,String name, Client creator) {
         this.name = name;
         this.creator = creator;
         clients = new ArrayList<>();
         messages = new ArrayList<>();
         admins = new ArrayList<>();
+        this.groupID = groupID;
     }
 
     public void addMember(Client client) {

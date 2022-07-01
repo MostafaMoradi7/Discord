@@ -22,7 +22,7 @@ public class Client implements Serializable {
     // TODO: HANDLE A PHOTO
     private LocalDateTime created_At;
 
-    private ArrayList<Server> servers;
+    private HashSet<Server> servers;
 
     //  CLIENT HAS A LIST OF FRIENDS:
     private HashSet<Client> friends;
@@ -53,7 +53,16 @@ public class Client implements Serializable {
         servers.remove(server);
     }
 
-    public boolean serverExists(){
+    public boolean anyServerExists(){
         return !servers.isEmpty();
+    }
+
+    public Server getDesiredServer(String serverName){
+        for (Server server : servers) {
+            if (server.getServerName().equals(serverName)) {
+                return server;
+            }
+        }
+        return null;
     }
 }

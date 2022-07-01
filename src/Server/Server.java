@@ -10,27 +10,28 @@ import Services.Group;
 import Chat.Chat;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
-public class Server extends Chat implements Runnable{
+public class Server extends Chat{
     private Client mainCreator;
     private ClientHandler clientHandler;
     private String serverName;
-    private ArrayList<Client> members;
-    private ArrayList<Client> admins;
-    private ArrayList<Client> bannedClients;
-    private ArrayList<Group> groups;
-    private ArrayList<Channel> channels;
+    private HashSet<Client> members;
+    private HashSet<Client> admins;
+    private HashSet<Client> bannedClients;
+    private HashSet<Group> groups;
+    private HashSet<Channel> channels;
     private ChatOutputHandler chatOutputHandler;
     private ChatInputHandler chatInputHandler;
 
 
     public Server(Client mainCreator, ClientHandler clientHandler, String serverName) {
         this.mainCreator = mainCreator;
-        members = new ArrayList<>();
-        admins = new ArrayList<>();
-        bannedClients = new ArrayList<>();
-        groups = new ArrayList<>();
-        channels = new ArrayList<>();
+        members = new HashSet<>();
+        admins = new HashSet<>();
+        bannedClients = new HashSet<>();
+        groups = new HashSet<>();
+        channels = new HashSet<>();
         members.add(mainCreator);
         admins.add(mainCreator);
         this.serverName = serverName;
@@ -51,6 +52,7 @@ public class Server extends Chat implements Runnable{
 
     public void removeMember(Client member) {
         members.remove(member);
+        member.removeServer(this);
     }
 
     public void addAdmin(Client admin) {
@@ -92,8 +94,40 @@ public class Server extends Chat implements Runnable{
         PortableData portableData = new PortableData("broadcast", message);
 
     }
-    @Override
-    public void run() {
-
+    /*------------------------------------------------------------------------------------*/
+    public String getServerName() {
+        return serverName;
     }
+
+    public String getServerMainCreator() {
+        return mainCreator.getUsername();
+    }
+
+    public HashSet<Client> getMembers() {
+        return (members);
+    }
+
+    public HashSet<Client> getAdmins() {
+        return (admins);
+    }
+
+    public HashSet<Channel> getChannels() {
+        return (channels);
+    }
+
+    public HashSet<Group> getGroups() {
+        return (groups);
+    }
+
+
+    public Channel getChannel(String channelName) {
+        for (Channel channel : channels) {
+            if (channel.getChannelID().equals(channelName)) {
+                return channel;
+            }
+        }
+        return null;
+    }
+
+
 }

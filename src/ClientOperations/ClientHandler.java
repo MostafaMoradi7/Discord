@@ -510,4 +510,8 @@ public class ClientHandler implements Runnable {
     public Client returnMainClient(){
         return this.client;
     }
+
+    public void receiveAMessage(PortableData newMessage){
+        this.portableData = newMessage;
+    }
 }

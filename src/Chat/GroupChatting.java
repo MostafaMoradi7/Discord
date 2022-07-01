@@ -22,9 +22,9 @@ public class GroupChatting extends Chat implements Runnable ,HandleChat, MemberI
 
     private boolean admin;
 
-    public GroupChatting(ClientHandler clientHandler, Client client, Group group){
+    public GroupChatting(ClientHandler clientHandler, Group group){
         this.clientHandler = clientHandler;
-        this.client = client;
+        this.client = clientHandler.returnMainClient();
         this.group = group;
 
         chatInputHandler = new ChatInputHandler(this, clientHandler.getClientSocket());
