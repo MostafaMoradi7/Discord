@@ -119,7 +119,6 @@ public class Server extends Chat{
         return (groups);
     }
 
-
     public Channel getChannel(String channelName) {
         for (Channel channel : channels) {
             if (channel.getChannelID().equals(channelName)) {
@@ -127,6 +126,10 @@ public class Server extends Chat{
             }
         }
         return null;
+    }
+
+    public HashSet<Client> getBannedClients() {
+        return (bannedClients);
     }
 
 

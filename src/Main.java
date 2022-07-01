@@ -270,10 +270,9 @@ public class Main {
         }
         if (isAdmin) {
             System.out.println("""
-                    [$kick] lick a user out
+                    [$kick] kick a user out
                     [$ban] ban a user
                     [$unban] unban a user
-                    [$pin] pin a message
                     """);
         }
 
@@ -392,6 +391,32 @@ public class Main {
                     }else{
                         System.out.println("you are not an admin");
                     }
+                }
+                case "$ban" -> {
+                    if (isAdmin) {
+                        if (ban(clientHandler))
+                            System.out.println("user banned");
+                        else
+                            System.out.println("user could not be banned");
+                        continueLoop = false;
+                    }else{
+                        System.out.println("you are not an admin");
+                    }
+                }
+                case "$unban" -> {
+                    if (isAdmin) {
+                        if (unban(clientHandler))
+                            System.out.println("user unbanned");
+                        else
+                            System.out.println("user could not be unbanned");
+                        continueLoop = false;
+                    }else{
+                        System.out.println("you are not an admin");
+                    }
+                }
+                default -> {
+                    System.out.println("invalid choice, try again: ");
+                    choice = scanner.nextLine();
                 }
             }
         }
@@ -807,6 +832,96 @@ public class Main {
             System.out.println("user kicked");
             client = (Client) response.getObject();
             workingServer.removeMember(client);
+            return true;
+        }
+        else{
+            System.out.println("error");
+            return false;
+        }
+    }
+
+    private boolean ban(ClientHandler clientHandler){
+        System.out.println("Please enter the username of the user you want to ban:");
+        Scanner scanner = new Scanner(System.in);
+        String name ;
+        do {
+            name = scanner.nextLine();
+            if (name.trim().isEmpty() || !Pattern.matches("[a-zA-Z0-9]+", name)) {
+                System.out.println("invalid name, please try again: ");
+            } else
+                break;
+        } while (true);
+        Client client = null;
+        for (Client client1 : workingServer.getMembers()) {
+            if (client1.getUsername().equals(name)) {
+                client = client1;
+            }
+        }
+        if(client == null){
+            System.out.println("user not found");
+            return false;
+        }
+        PortableData data = new PortableData("ban", client);
+        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
+        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
+        Thread tOUT = new Thread(clientOutputHandler);
+        Thread tIN = new Thread(clientInputHandler);
+        clientOutputHandler.setPortableData(data);
+        tOUT.start();
+        tIN.start();
+        PortableData response;
+        while ((response = clientInputHandler.getPortableData()) == null) {
+            //wait for response
+        }
+        if(response.getOrder().equals("successful")){
+            System.out.println("user banned");
+            client = (Client) response.getObject();
+            workingServer.banClient(client);
+            return true;
+        }
+        else{
+            System.out.println("error");
+            return false;
+        }
+    }
+
+    private boolean unban(ClientHandler clientHandler){
+        System.out.println("Please enter the username of the user you want to unban:");
+        Scanner scanner = new Scanner(System.in);
+        String name ;
+        do {
+            name = scanner.nextLine();
+            if (name.trim().isEmpty() || !Pattern.matches("[a-zA-Z0-9]+", name)) {
+                System.out.println("invalid name, please try again: ");
+            } else
+                break;
+        } while (true);
+        Client client = null;
+        for (Client client1 : workingServer.getBannedClients()) {
+            if (client1.getUsername().equals(name)) {
+                client = client1;
+            }
+        }
+        if(client == null){
+            System.out.println("user not found");
+            return false;
+        }
+        PortableData data = new PortableData("unban", client);
+        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
+        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
+        Thread tOUT = new Thread(clientOutputHandler);
+        Thread tIN = new Thread(clientInputHandler);
+        clientOutputHandler.setPortableData(data);
+        tOUT.start();
+        tIN.start();
+        PortableData response;
+        while ((response = clientInputHandler.getPortableData()) == null) {
+            //wait for response
+        }
+        if(response.getOrder().equals("successful")){
+            System.out.println("user unbanned");
+            client = (Client) response.getObject();
+            workingServer.unbanClient(client);
             return true;
         }
         else{
