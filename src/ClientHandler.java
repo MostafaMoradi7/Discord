@@ -39,13 +39,20 @@ public class ClientHandler extends Thread {
                     Client client = (Client) portableData.getObject();
                     PortableData sendResponse = UserQueries.checkLogin(client);
                     objectOutputStream.writeObject(sendResponse);
-                }else if (Objects.equals(portableData.getOrder(),"new private chat")){
-                    PrivateChat privateChat = (PrivateChat) portableData.getObject();
-                    PrivateChatQueries.newPrivateChat(privateChat);
+                }else if (Objects.equals(portableData.getOrder(),"findUser")){
+                    Client client = (Client) portableData.getObject();
+                    Client client1 = UserQueries.findUserWithUsername(client);
+                    if(client1 == null){
+                        objectOutputStream.writeObject(new PortableData("400",null));
+                    }else{
+                        objectOutputStream.writeObject(new PortableData("200" , client1));
+                    }
                 }else if(Objects.equals(portableData.getOrder(),"private")){
                     Client client = (Client) portableData.getObject();
                     PortableData sendResponse = PrivateChatQueries.listPrivateChat(client);
                     objectOutputStream.writeObject(sendResponse);
+                }else  if(Objects.equals(portableData.getOrder(),"new private chat"){
+                    
                 }
             }
         } catch (Exception e) {

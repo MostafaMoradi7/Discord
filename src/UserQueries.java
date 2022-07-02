@@ -6,37 +6,6 @@ import java.util.Objects;
 public class UserQueries {
 
     public void main() {
-//        createNewDatabase("projectAP.sqlite");
-//        createTableUser();
-//        createTablePrivateChat();
-        Client client = new Client(1, "messi", "123", null, null, Status.DO_NOT_DISTURB);
-        //       System.out.println(findUserWithId(client.getClientID()));
-//        checkLogin(client);
-        //     listPrivateChat(client);
-//        createPrivateChatMessages();
-        Client client2 = new Client(2, "slsakfd", "123", "af", "fdsa", Status.DO_NOT_DISTURB);
-        Group group = new Group(1,1,"mogtaba",client,null, LocalDateTime.now().toString());
-        System.out.println(ServerQueries.allInformationServer(1));
-//        ArrayList<ServerDiscord> serverDiscords = (ArrayList<ServerDiscord>) ServerQueries.findServers(client).getObject();
-//        System.out.println(serverDiscords.get(1).toString());
-//        group.addMember(client2);
-//        group.addMember(client);
-    //    GroupQueries.createTableGroup();
-      //  GroupQueries.createTableGroupAdmin();
-     //   GroupQueries.insertNewGroupMembers(group);
-//        GroupQueries.createTableGroupAdmin();
-//        GroupQueries.createTableGroupMember();
-//        ServerQueries.createTableServerMember();
-     //   GroupQueries.newGroup(group);
-      //  GroupQueries.insertNewGroupMessage(new GroupMessage(null,1,client,"alsdkjf",LocalDateTime.now().toString()));
-       // GroupQueries.createTableGroupMember();
-        // GroupQueries.createGroupMessageTable();
-        //      insertNewUserData(client2);
-       // PrivateChatMessage privateChatMessage = new PrivateChatMessage(1, null, null, LocalDateTime.now().toString(), "salam");
-      //  insertNewMessagePrivateChat(privateChatMessage);
-//        PrivateChat privateChat = new PrivateChat(1,null,null);
-//        ArrayList<PrivateChatMessage> privateChatMessages= (ArrayList<PrivateChatMessage>) findPrivateChatMessage(privateChat).getObject();
-//        System.out.println(privateChatMessages.get(1).toString());
     }
 
     public static void createNewDatabase(String fileName) {
@@ -134,7 +103,6 @@ public class UserQueries {
             }
             if (Objects.equals(client1.getPassword(), client.getPassword())) {
                 client1.setToken("alskdfjljasdfjl");
-                System.out.println("123");
                 return new PortableData("200", client1);
             } else {
                 return new PortableData("400", null);
