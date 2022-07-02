@@ -1,13 +1,11 @@
-package Services;
 
-import ClientOperations.Client;
-import MessageOperations.PrivateChatMessage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class PrivateChat implements Serializable {
-    private String chatID;
+    private static final long serialVersionUID = 3L;
+    private int chatID;
     private Client clientONE;
     private Client clientTWO;
     private ArrayList<PrivateChatMessage> messages;
@@ -27,7 +25,7 @@ public class PrivateChat implements Serializable {
         return clientONE;
     }
 
-    public void setChatID(String chatID) {
+    public void setChatID(int chatID) {
         this.chatID = chatID;
     }
 

@@ -1,10 +1,3 @@
-package Chat;
-
-import ClientOperations.*;
-import MessageOperations.PrivateChatMessage;
-import MessageOperations.TypeMVF;
-import Services.PrivateChat;
-
 import java.util.Scanner;
 
 public class PVChatting extends Chat implements Runnable, HandleChat{

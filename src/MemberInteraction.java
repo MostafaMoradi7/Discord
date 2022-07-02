@@ -1,7 +1,3 @@
-package Chat;
-
-import ClientOperations.Client;
-
 public interface MemberInteraction
 {
     public void addMember(Client client);

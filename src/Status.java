@@ -1,5 +1,3 @@
-package ClientOperations;
-
 public enum Status {
 
     ONLINE,

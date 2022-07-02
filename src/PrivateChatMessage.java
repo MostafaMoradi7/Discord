@@ -1,9 +1,4 @@
-package MessageOperations;
-
-import ClientOperations.Client;
-
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 public class PrivateChatMessage extends Message implements Serializable {
     private Client to;

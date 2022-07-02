@@ -1,8 +1,3 @@
-package Chat;
-
-import ClientOperations.PortableData;
-import MessageOperations.Message;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;

@@ -1,10 +1,3 @@
-package Chat;
-
-import ClientOperations.Client;
-import ClientOperations.PortableData;
-import MessageOperations.ChannelMessage;
-import Services.Channel;
-
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.regex.Pattern;

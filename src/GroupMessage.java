@@ -1,7 +1,3 @@
-package MessageOperations;
-
-import ClientOperations.Client;
-
 import java.io.Serializable;
 
 public class GroupMessage extends Message implements Serializable {

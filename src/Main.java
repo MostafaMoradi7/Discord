@@ -1,11 +1,3 @@
-import Chat.ChannelChatting;
-import Chat.ChatInputHandler;
-import Chat.GroupChatting;
-import ClientOperations.*;
-import Server.Server;
-import Services.Channel;
-import Services.Group;
-
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -19,26 +11,39 @@ public class Main {
         /*
                 here the client logs into the system and gets a socket to communicate with the server
                                                                                                             */
-        if (login(clientHandler)) {
-            System.out.println("Login successful");
+        if (login(clientHandler))
             loggedIn = true;
-        } else {
-            System.out.println("Login failed");
-            loggedIn = false;
-        }
+
         /*
                 here a server is whether chosen or created by the client
                                                                                 */
-        if (loggedIn)
-            serverConnection(clientHandler);
 
-        /*
-                here the client interacts with the chosen system
-                                                                        */
-
-
+        System.out.println("""
+                [1] Directs
+                [2] servers
+                [3] logout
+                """);
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        switch (input) {
+            case "1" -> {
+                System.out.println("Hello");
+                interactWithDirects(clientHandler);
+            }
+            case "2" -> serverConnection(clientHandler);
+            case "3" -> logout();
+            default -> System.out.println("Invalid input");
+        }
 
     }
+
+//        /*
+//                here the client interacts with the chosen system
+//                                                                        */
+//        interactWithServer(clientHandler);
+
+
+
 
     public static boolean login(ClientHandler clientHandler) {
         System.out.println("welcome to discord");
@@ -49,35 +54,40 @@ public class Main {
                 """);
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
-        boolean loggedIn = false;
-        while (!loggedIn) {
-            switch (choice) {
-                case 1 -> {
-                    if (clientHandler.loginClient() != null)
+        boolean loggedIn2 = false;
+
+        switch (choice) {
+            case 1 -> {
+                if (clientHandler.loginClient() != null) {
+                    loggedIn2 = true;
+                    loggedIn = true;
+                } else
+                    return false;
+            }
+            case 2 -> {
+                if (clientHandler.registerClient() != null) {
+                    System.out.println("Registration successful");
+                    loggedIn2 = false;
+                    if (login(clientHandler))
                         loggedIn = true;
                     else
-                        return false;
-                }
-                case 2 -> {
-                    if (clientHandler.registerClient() != null)
-                        loggedIn = true;
-                    else
-                        return false;
-                }
-                case 3 -> {
-                    System.exit(0);
-                }
-                default -> {
-                    System.out.println("invalid choice");
-                    choice = scanner.nextInt();
-                }
+                        loggedIn = false;
+                } else
+                    return false;
+            }
+            case 3 -> {
+                System.exit(0);
+            }
+            default -> {
+                System.out.println("invalid choice");
+                choice = scanner.nextInt();
             }
         }
+
         return true;
     }
 
-    public static void logout(ClientHandler clientHandler) {
-        clientHandler.shutdown();
+    public static void logout() {
         loggedIn = false;
         System.exit(0);
     }
@@ -235,7 +245,7 @@ public class Main {
                         return;
                 }
                 case 4 -> {
-                    logout(clientHandler);
+                    logout();
                     workingServer = null;
                     login(clientHandler);
                 }
@@ -247,7 +257,7 @@ public class Main {
         }
     }
 
-    public void interactWithServer(ClientHandler clientHandler) {
+    public static void interactWithServer(ClientHandler clientHandler) {
         boolean isAdmin = false;
         boolean inCreator = false;
         if (workingServer.getServerMainCreator().equals(clientHandler.returnMainClient().getUsername())) {
@@ -422,12 +432,12 @@ public class Main {
             }
         }
 
-        logout(clientHandler);
+        logout();
         workingServer = null;
         login(clientHandler);
     }
 
-    private Channel channelChosen(ClientHandler clientHandler){
+    private static Channel channelChosen(ClientHandler clientHandler){
         Channel chosenChannel = null;
         Scanner scanner = new Scanner(System.in);
         if (workingServer.getChannels().size() == 0) {
@@ -469,7 +479,7 @@ public class Main {
         }
     }
 
-    private Group groupChosen(ClientHandler clientHandler){
+    private static Group groupChosen(ClientHandler clientHandler){
         Group chosenGroup = null;
         Scanner scanner = new Scanner(System.in);
         if (workingServer.getGroups().size() == 0) {
@@ -511,7 +521,7 @@ public class Main {
         }
     }
 
-    private boolean deleteServer(ClientHandler clientHandler) {
+    private static boolean deleteServer(ClientHandler clientHandler) {
         System.out.println("Are you sure you want to delete the server? (y/n)");
         Scanner scanner = new Scanner(System.in);
         String choice = scanner.nextLine();
@@ -542,7 +552,7 @@ public class Main {
             return false;
     }
 
-    private boolean createChannel(ClientHandler clientHandler){
+    private static boolean createChannel(ClientHandler clientHandler){
         System.out.println("please enter the name of the channel you want to create:");
         Scanner scanner = new Scanner(System.in);
         String name = scanner.nextLine();
@@ -581,7 +591,7 @@ public class Main {
 
     }
 
-    private boolean createGroup(ClientHandler clientHandler){
+    private static boolean createGroup(ClientHandler clientHandler){
         System.out.println("please enter the name of the group you want to create:");
         Scanner scanner = new Scanner(System.in);
         String name = scanner.nextLine();
@@ -620,7 +630,7 @@ public class Main {
 
     }
 
-    private boolean deleteChannel(ClientHandler clientHandler){
+    private static boolean deleteChannel(ClientHandler clientHandler){
         System.out.println("Please enter the name of the channel you want to delete:");
         Scanner scanner = new Scanner(System.in);
         String name ;
@@ -663,7 +673,7 @@ public class Main {
         }
     }
 
-    private boolean deleteGroup(ClientHandler clientHandler){
+    private static boolean deleteGroup(ClientHandler clientHandler){
         System.out.println("Please enter the name of the group you want to delete:");
         Scanner scanner = new Scanner(System.in);
         String name ;
@@ -706,7 +716,7 @@ public class Main {
         }
     }
 
-    private boolean addAdmin(ClientHandler clientHandler){
+    private static boolean addAdmin(ClientHandler clientHandler){
         System.out.println("Please enter the username of the user you want to promote to admin:");
         Scanner scanner = new Scanner(System.in);
         String name ;
@@ -751,7 +761,7 @@ public class Main {
         }
     }
 
-    private boolean removeAdmin(ClientHandler clientHandler){
+    private static boolean removeAdmin(ClientHandler clientHandler){
         System.out.println("Please enter the username of the user you want to demote to member:");
         Scanner scanner = new Scanner(System.in);
         String name ;
@@ -796,7 +806,7 @@ public class Main {
         }
     }
 
-    private boolean kick(ClientHandler clientHandler){
+    private static boolean kick(ClientHandler clientHandler){
         System.out.println("Please enter the username of the user you want to kick:");
         Scanner scanner = new Scanner(System.in);
         String name ;
@@ -841,7 +851,7 @@ public class Main {
         }
     }
 
-    private boolean ban(ClientHandler clientHandler){
+    private static boolean ban(ClientHandler clientHandler){
         System.out.println("Please enter the username of the user you want to ban:");
         Scanner scanner = new Scanner(System.in);
         String name ;
@@ -886,7 +896,7 @@ public class Main {
         }
     }
 
-    private boolean unban(ClientHandler clientHandler){
+    private static boolean unban(ClientHandler clientHandler){
         System.out.println("Please enter the username of the user you want to unban:");
         Scanner scanner = new Scanner(System.in);
         String name ;
@@ -929,5 +939,24 @@ public class Main {
             System.out.println("error");
             return false;
         }
+    }
+
+    private static void interactWithDirects(ClientHandler clientHandler){
+        System.out.println("""
+                [1] new private chat
+                [2] chat lists
+                """);
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+        if (choice == 1){
+            PortableData data = clientHandler.sendAndReceive(new PortableData("new private",clientHandler.findClient()));
+            if (data == null){
+                System.out.println("No such client found");
+            }else{
+
+            }
+        }
+        PortableData data = clientHandler.sendAndReceive(new PortableData("private", clientHandler.returnMainClient()));
+        System.out.println(data.getObject() + data.getOrder());
     }
 }

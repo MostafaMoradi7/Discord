@@ -1,8 +1,3 @@
-package MessageOperations;
-
-import ClientOperations.Client;
-import Services.Type;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 

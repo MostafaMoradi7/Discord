@@ -1,13 +1,3 @@
-package Chat;
-
-import ClientOperations.Client;
-import ClientOperations.ClientHandler;
-import ClientOperations.PortableData;
-import MessageOperations.GroupMessage;
-import MessageOperations.PrivateChatMessage;
-import MessageOperations.TypeMVF;
-import Services.Group;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;

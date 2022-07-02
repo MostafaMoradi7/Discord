@@ -1,18 +1,15 @@
-package ClientOperations;
-
-import Server.Server;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 
 public class Client implements Serializable {
+    private static final long serialVersionUID = 2L;
     /*
             FIELDS
                                 */
-    private String clientID;
+
+    private int clientID;
     private String username;
     private String password;
     private String email;
@@ -20,7 +17,7 @@ public class Client implements Serializable {
     private String phone_Number;
     private Status status;
     // TODO: HANDLE A PHOTO
-    private LocalDateTime created_At;
+    private String created_At;
 
     private HashSet<Server> servers;
 
@@ -38,7 +35,7 @@ public class Client implements Serializable {
         this.email = email;
         this.phone_Number = phone_Number;
         this.status = status;
-        created_At = LocalDateTime.now();
+        created_At = LocalDateTime.now().toString();
     }
 
     public String getUsername() {
@@ -55,6 +52,10 @@ public class Client implements Serializable {
 
     public boolean anyServerExists(){
         return !servers.isEmpty();
+    }
+
+    public int getClientID() {
+        return clientID;
     }
 
     public Server getDesiredServer(String serverName){

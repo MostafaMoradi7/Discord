@@ -1,8 +1,3 @@
-package Chat;
-
-import MessageOperations.Message;
-
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class Chat implements Runnable{

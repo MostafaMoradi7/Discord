@@ -1,7 +1,3 @@
-package MessageOperations;
-
-import ClientOperations.Client;
-
 import java.time.LocalDateTime;
 
 public class Message {

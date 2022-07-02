@@ -1,7 +1,4 @@
-package Services;
 
-import ClientOperations.Client;
-import MessageOperations.ChannelMessage;
 
 import java.io.Serializable;
 import java.util.ArrayList;

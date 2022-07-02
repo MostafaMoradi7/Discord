@@ -1,11 +1,3 @@
-package Chat;
-
-import ClientOperations.Client;
-import ClientOperations.ClientHandler;
-import Services.Channel;
-import Services.Group;
-import Services.PrivateChat;
-
 public class ChatServices implements Runnable{
     private ClientHandler clientHandler;
     private Client client;

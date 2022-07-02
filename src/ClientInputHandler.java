@@ -1,5 +1,3 @@
-package ClientOperations;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -26,21 +24,13 @@ public class ClientInputHandler implements Runnable{
     @Override
     public void run() {
         try {
-            while (isRunning){
-                portableData = (PortableData) reader.readObject();
-                System.out.println(portableData.getObject() + "    " + portableData.getOrder());
-                if (portableData.getOrder().equals("PVMessage"))
-                    clientHandler.receivePVMessage(portableData);
-                else if (portableData.getOrder().equals("ChannelMessage"))
-                    clientHandler.receiveChannelMessage(portableData);
-                else if (portableData.getOrder().equals("GapMessage"))
-                    clientHandler.receiveGapMessage(portableData);
-                else{
-                    clientHandler.setPortableData(portableData);
-                }
+            System.out.println("ClientInputHandler is running");
+            portableData = (PortableData) reader.readObject();
+            System.out.println(portableData.getOrder() + ": " + portableData.getObject());
+            clientHandler.setPortableData(portableData);
 
-            }
-        } catch (IOException e) {
+
+        }catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
