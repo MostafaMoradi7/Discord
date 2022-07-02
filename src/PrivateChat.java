@@ -1,7 +1,8 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PrivateChat {
+public class PrivateChat implements Serializable {
+     private static final long serialVersionUID = 3L;
         private int chatID;
         private Client clientONE;
         private Client clientTWO;

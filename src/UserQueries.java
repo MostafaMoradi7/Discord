@@ -134,6 +134,7 @@ public class UserQueries {
             }
             if (Objects.equals(client1.getPassword(), client.getPassword())) {
                 client1.setToken("alskdfjljasdfjl");
+                System.out.println("123");
                 return new PortableData("200", client1);
             } else {
                 return new PortableData("400", null);
@@ -172,14 +173,13 @@ public class UserQueries {
             pstmt.setString(4, client.getPhone_Number());
             pstmt.setString(5, client.getStatus().toString());
             pstmt.setString(6, "not path");
-            pstmt.setString(7, client.getCreated_At().toString());
+            pstmt.setString(7, client.getCreated_At());
             pstmt.executeUpdate();
-            return new PortableData("200",null);
+            return new PortableData("200",findUserWithUsername(client));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return new PortableData("400",null);
     }
-
 }
 

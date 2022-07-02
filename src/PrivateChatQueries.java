@@ -91,6 +91,7 @@ public class PrivateChatQueries {
 
     // test done
     public static PortableData listPrivateChat(Client client) {
+       // System.out.println(client.getClientID());
         ArrayList<PrivateChat> privateChats = new ArrayList<>();
         String sql = "SELECT * FROM private_chats WHERE client1 = ?;";
         try (Connection conn = UserQueries.connect();

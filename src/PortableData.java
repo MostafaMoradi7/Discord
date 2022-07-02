@@ -17,4 +17,12 @@ public class PortableData implements Serializable {
     public Object getObject() {
         return object;
     }
+
+    @Override
+    public String toString() {
+        return "PortableData{" +
+                "order='" + order + '\'' +
+                ", object=" + object +
+                '}';
+    }
 }
