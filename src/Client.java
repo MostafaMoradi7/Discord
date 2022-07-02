@@ -3,10 +3,11 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 
 
-public class Client implements Serializable {
+public class Client implements Serializable{
     /*
             FIELDS
                                 */
+    private static final long serialVersionUID = 2L;
     private int clientID;
     private String username;
     private String password;
@@ -15,7 +16,7 @@ public class Client implements Serializable {
     private String phone_Number;
     private Status status;
     // TODO: HANDLE A PHOTO
-    private LocalDateTime created_At;
+    private String created_At;
 
     //  CLIENT HAS A LIST OF FRIENDS:
     private HashSet<Client> friends;
@@ -32,7 +33,7 @@ public class Client implements Serializable {
         this.email = email;
         this.phone_Number = phone_Number;
         this.status = status;
-        created_At = LocalDateTime.now();
+        created_At = LocalDateTime.now().toString();
     }
 
     public String getUsername() {
@@ -55,7 +56,7 @@ public class Client implements Serializable {
         return status;
     }
 
-    public LocalDateTime getCreated_At() {
+    public String getCreated_At() {
         return created_At;
     }
 
@@ -88,7 +89,7 @@ public class Client implements Serializable {
     }
 
     public void setCreated_At(LocalDateTime created_At) {
-        this.created_At = created_At;
+        this.created_At = created_At.toString();
     }
 
     public void setToken(String token) {
