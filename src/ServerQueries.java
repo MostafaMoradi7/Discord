@@ -101,6 +101,7 @@ public class ServerQueries {
         }
         return new PortableData("something is wrong",null);
     }
+    //test done
     public static PortableData allInformationServer(int id){
         ServerDiscord serverDiscord = findServerWithID(id);
         if (serverDiscord != null) {

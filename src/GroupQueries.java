@@ -215,7 +215,7 @@ public class GroupQueries {
     }
     public static ArrayList<Group> findGroupForServer(int server_id){
         ArrayList<Group> groups = new ArrayList<>();
-        String sql = "SELECT * FROM Group WHERE server_id = ?;";
+        String sql = "SELECT * FROM groups WHERE server_id = ?;";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, server_id);
