@@ -128,15 +128,15 @@ public class UserQueries {
     // test done
     public static PortableData checkLogin(Client client) {
         try {
-            Client databaseClient = findUserWithUsername(client);
-            if (databaseClient == null) {
+            Client client1 = findUserWithUsername(client);
+            if (client1 == null) {
                 return new PortableData("user not found", null);
             }
-            if (Objects.equals(databaseClient.getPassword(), client.getPassword())) {
-                databaseClient.setToken("alskdfjljasdfjl");
-                return new PortableData("true", databaseClient);
+            if (Objects.equals(client1.getPassword(), client.getPassword())) {
+                client1.setToken("alskdfjljasdfjl");
+                return new PortableData("200", client1);
             } else {
-                return new PortableData("password is incorrect", null);
+                return new PortableData("400", null);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -162,7 +162,7 @@ public class UserQueries {
 
 
     // test done
-    public static int insertNewUserData(Client client) {
+    public static PortableData insertNewUserData(Client client) {
         String sql = "INSERT INTO users(username,password,email,phone_number,status,profile,created_at) VALUES(?,?,?,?,?,?,?)";
         try (Connection conn = connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -174,11 +174,11 @@ public class UserQueries {
             pstmt.setString(6, "not path");
             pstmt.setString(7, client.getCreated_At().toString());
             pstmt.executeUpdate();
-            return 1;
+            return new PortableData("200",null);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return 0;
+        return new PortableData("400",null);
     }
 
 }
