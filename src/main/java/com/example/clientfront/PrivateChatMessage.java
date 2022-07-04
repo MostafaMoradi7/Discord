@@ -1,0 +1,22 @@
+package com.example.clientfront;
+
+import java.io.Serializable;
+
+public class PrivateChatMessage extends Message implements Serializable {
+    private Client to;
+
+
+    public PrivateChatMessage(TypeMVF type, Client from, Client to, Object message) {
+        super(type,from, message);
+        this.to = to;
+    }
+
+
+
+
+    public Client getTo() {
+        return to;
+    }
+
+
+}

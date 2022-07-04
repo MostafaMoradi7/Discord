@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="536.0" prefWidth="732.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clientfront.RegisterController">
+   <children>
+      <TextField fx:id="username" alignment="CENTER" layoutX="451.0" layoutY="94.0" prefHeight="25.0" prefWidth="179.0" promptText="username" />
+      <TextField fx:id="password" alignment="CENTER" layoutX="451.0" layoutY="144.0" prefHeight="25.0" prefWidth="179.0" promptText="password" />
+      <Button layoutX="528.0" layoutY="443.0" mnemonicParsing="false" onAction="#register" prefHeight="33.0" prefWidth="55.0" text="submit" textFill="#0e61d4" />
+      <Button layoutX="528.0" layoutY="485.0" mnemonicParsing="false" onAction="#setBackToLogin" prefHeight="34.0" prefWidth="55.0" text="log in" textFill="#0e61d4" />
+      <ImageView fitHeight="400.0" fitWidth="650.0" layoutX="-146.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
+         <image>
+            <Image url="@photo_2022-07-04_11-56-57.jpg" />
+         </image></ImageView>
+      <Label alignment="CENTER" layoutX="29.0" layoutY="-54.0" prefHeight="400.0" prefWidth="300.0" text="welcome to discord" textFill="WHITE">
+         <font>
+            <Font size="31.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="449.0" layoutY="14.0" prefHeight="80.0" prefWidth="186.0" text="register" textFill="#0e61d4">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Label>
+      <TextField fx:id="phone_Number" alignment="CENTER" layoutX="452.0" layoutY="192.0" prefHeight="25.0" prefWidth="179.0" promptText="phone number" />
+      <TextField fx:id="email" alignment="CENTER" layoutX="452.0" layoutY="242.0" prefHeight="25.0" prefWidth="179.0" promptText="email" />
+      <Label fx:id="username_error" alignment="CENTER" layoutX="451.0" layoutY="119.0" prefHeight="25.0" prefWidth="179.0" textFill="RED">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="password_error" alignment="CENTER" layoutX="452.0" layoutY="169.0" prefHeight="17.0" prefWidth="179.0" textFill="RED">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="phone_Number_error" alignment="CENTER" layoutX="451.0" layoutY="217.0" prefHeight="17.0" prefWidth="179.0" textFill="RED">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="email_error" alignment="CENTER" layoutX="452.0" layoutY="267.0" prefHeight="17.0" prefWidth="179.0" textFill="RED">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
