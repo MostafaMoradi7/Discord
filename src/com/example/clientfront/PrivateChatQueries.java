@@ -9,7 +9,7 @@ public class PrivateChatQueries {
     public static void createTable() {
         Statement stmt = null;
         try {
-            Connection conn =UserQueries.connect();
+            Connection conn = UserQueries.connect();
             System.out.println("Database Opened...\n");
             stmt = conn.createStatement();
             String sql = "CREATE TABLE private_chats " +
@@ -76,24 +76,25 @@ public class PrivateChatQueries {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+
     // test done
     public static PortableData newPrivateChat(PrivateChat privateChat) {
-        String sql = "INSERT INTO private_chats(user1,user2) VALUES(?,?)";
-        try (Connection conn =UserQueries.connect();
+        String sql = "INSERT INTO private_chats(client1,client2) VALUES(?,?)";
+        try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, privateChat.getClientONE().getClientID());
             pstmt.setInt(2, privateChat.getClientTWO().getClientID());
             pstmt.executeUpdate();
-            return new PortableData("ok", null);
+            return new PortableData("200", null);
         } catch (SQLException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            System.out.println(e.getMessage());
         }
         return null;
     }
 
     // test done
     public static PortableData listPrivateChat(Client client) {
-       // System.out.println(client.getClientID());
+        // System.out.println(client.getClientID());
         ArrayList<PrivateChat> privateChats = new ArrayList<>();
         String sql = "SELECT * FROM private_chats WHERE client1 = ?;";
         try (Connection conn = UserQueries.connect();
@@ -122,6 +123,7 @@ public class PrivateChatQueries {
         System.out.println(privateChats);
         return new PortableData("Array list private chat", privateChats);
     }
+
     //test done
     public static int insertNewMessagePrivateChat(PrivateChatMessage privateChatMessage) {
         String sql = "INSERT INTO privateChatMessages(chatId,sender,receiver,body,created_At) VALUES(?,?,?,?,?)";
@@ -139,6 +141,7 @@ public class PrivateChatQueries {
         }
         return 0;
     }
+
     //test done
     public static PortableData findPrivateChatMessage(PrivateChat privateChat) {
         ArrayList<PrivateChatMessage> messages = new ArrayList<>();
@@ -148,15 +151,15 @@ public class PrivateChatQueries {
             pstmt.setInt(1, privateChat.getChatID());
             ResultSet rst = pstmt.executeQuery();
             while (rst.next()) {
-                PrivateChatMessage privateChatMessage = new PrivateChatMessage(rst.getInt("id"),privateChat.getChatID(),
+                PrivateChatMessage privateChatMessage = new PrivateChatMessage(rst.getInt("id"), privateChat.getChatID(),
                         UserQueries.findUserWithId(rst.getInt("sender")), UserQueries.findUserWithId(rst.getInt("receiver"))
                         , rst.getString("created_At"), rst.getString("body"));
                 messages.add(privateChatMessage);
             }
-            return new PortableData("privateChatMessage",messages);
+            return new PortableData("privateChatMessage", messages);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new PortableData("something is wrong",null);
+        return new PortableData("something is wrong", null);
     }
 }

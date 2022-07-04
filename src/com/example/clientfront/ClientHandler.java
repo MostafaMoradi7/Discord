@@ -32,25 +32,28 @@ public class ClientHandler extends Thread {
                     PortableData sendResponse = UserQueries.insertNewUserData(client);
                     //System.out.println(sendResponse);
                     objectOutputStream.writeObject(sendResponse);
-                // login done
+                    // login done
                 } else if (Objects.equals(portableData.getOrder(), "login")) {
                     Client client = (Client) portableData.getObject();
                     PortableData sendResponse = UserQueries.checkLogin(client);
                     objectOutputStream.writeObject(sendResponse);
-                }else if (Objects.equals(portableData.getOrder(),"findUser")){
+                } else if (Objects.equals(portableData.getOrder(), "findUser")) {
                     Client client = (Client) portableData.getObject();
                     Client client1 = UserQueries.findUserWithUsername(client);
-                    if(client1 == null){
-                        objectOutputStream.writeObject(new PortableData("400",null));
-                    }else{
-                        objectOutputStream.writeObject(new PortableData("200" , client1));
+                    if (client1 == null) {
+                        objectOutputStream.writeObject(new PortableData("400", null));
+                    } else {
+                        objectOutputStream.writeObject(new PortableData("200", client1));
                     }
-                }else if(Objects.equals(portableData.getOrder(),"private")){
+                } else if (Objects.equals(portableData.getOrder(), "private")) {
                     Client client = (Client) portableData.getObject();
                     PortableData sendResponse = PrivateChatQueries.listPrivateChat(client);
                     objectOutputStream.writeObject(sendResponse);
-                }else  if(Objects.equals(portableData.getOrder(),"new private chat")){
-                    
+                } else if (Objects.equals(portableData.getOrder(), "new private chat")) {
+                    PrivateChat privateChat = (PrivateChat) portableData.getObject();
+                    PortableData sendResponse = PrivateChatQueries.newPrivateChat(privateChat);
+                    System.out.println(sendResponse);
+                    objectOutputStream.writeObject(sendResponse);
                 }
             }
         } catch (Exception e) {
