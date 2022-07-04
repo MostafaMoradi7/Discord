@@ -85,14 +85,26 @@ public class PrivateChatQueries {
             pstmt.setInt(1, privateChat.getClientONE().getClientID());
             pstmt.setInt(2, privateChat.getClientTWO().getClientID());
             pstmt.executeUpdate();
-            return new PortableData("200", null);
+            return new PortableData("200", findIdForPrivateChat(privateChat));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return null;
     }
-
-    // test done
+    public static PrivateChat findIdForPrivateChat(PrivateChat privateChat) {
+        String sql2 = "SELECT * FROM private_chats WHERE client1 = ? AND client2 = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql2)) {
+            pstmt.setInt(1, privateChat.getClientONE().getClientID());
+            pstmt.setInt(2, privateChat.getClientTWO().getClientID());
+            ResultSet rst = pstmt.executeQuery();
+            return new PrivateChat(rst.getInt("id"),privateChat.getClientONE(),privateChat.getClientTWO());
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+        // test done
     public static PortableData listPrivateChat(Client client) {
         // System.out.println(client.getClientID());
         ArrayList<PrivateChat> privateChats = new ArrayList<>();

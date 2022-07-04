@@ -34,5 +34,15 @@ public class PrivateChat implements Serializable {
     public void setChatID(int chatID){
             this.chatID=chatID;
     }
+
+    @Override
+    public String toString() {
+        return "PrivateChat{" +
+                "chatID=" + chatID +
+                ", clientONE=" + clientONE +
+                ", clientTWO=" + clientTWO +
+                ", messages=" + messages +
+                '}';
+    }
 }
 

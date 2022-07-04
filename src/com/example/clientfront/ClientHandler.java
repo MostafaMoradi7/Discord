@@ -52,7 +52,6 @@ public class ClientHandler extends Thread {
                 } else if (Objects.equals(portableData.getOrder(), "new private chat")) {
                     PrivateChat privateChat = (PrivateChat) portableData.getObject();
                     PortableData sendResponse = PrivateChatQueries.newPrivateChat(privateChat);
-                    System.out.println(sendResponse);
                     objectOutputStream.writeObject(sendResponse);
                 }
             }
