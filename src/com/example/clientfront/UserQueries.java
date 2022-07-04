@@ -86,8 +86,12 @@ public class UserQueries {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, client.getUsername());
             ResultSet rst = pstmt.executeQuery();
-            return new Client(rst.getInt("id"), rst.getString("username"), rst.getString("password"), rst.getString("email"),
-                    rst.getString("phone_number"), Status.valueOf(rst.getString("status")));
+            if (rst == null){
+                return null;
+            }else{
+                return new Client(rst.getInt("id"), rst.getString("username"), rst.getString("password"), rst.getString("email"),
+                        rst.getString("phone_number"), Status.valueOf(rst.getString("status")));
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
