@@ -26,11 +26,9 @@ public class ClientHandler extends Thread {
 
             while (true) {
                 PortableData portableData = (PortableData) objectInputStream.readObject();
-                // registration done
                 if (Objects.equals(portableData.getOrder(), "registration")) {
                     Client client = (Client) portableData.getObject();
                     PortableData sendResponse = UserQueries.insertNewUserData(client);
-                    //System.out.println(sendResponse);
                     objectOutputStream.writeObject(sendResponse);
                 } else if (Objects.equals(portableData.getOrder(), "login")) {
                     Client client = (Client) portableData.getObject();

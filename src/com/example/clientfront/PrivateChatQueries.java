@@ -132,7 +132,6 @@ public class PrivateChatQueries {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        System.out.println(privateChats);
         return new PortableData("Array list private chat", privateChats);
     }
 
