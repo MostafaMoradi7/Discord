@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class PrivateChatMessage implements Serializable {
     private static final long serialVersionUID = 4L;
     private int messageID;
-    private int ChatId;
+    private int chatId;
     private Client sender;
     private Client receiver;
     private String dateTime;
@@ -13,7 +13,7 @@ public class PrivateChatMessage implements Serializable {
     private TypeMVF type;
 
     public PrivateChatMessage(int chatId, Client sender, Client receiver, String dateTime, String message,TypeMVF type) {
-        this.ChatId = chatId;
+        this.chatId = chatId;
         this.sender = sender;
         this.receiver = receiver;
         this.dateTime = dateTime;
@@ -26,7 +26,7 @@ public class PrivateChatMessage implements Serializable {
     }
 
     public int getChatId() {
-        return ChatId;
+        return chatId;
     }
 
     public Client getSender() {
@@ -53,7 +53,7 @@ public class PrivateChatMessage implements Serializable {
     public String toString() {
         return "PrivateChatMessage{" +
                 "messageID=" + messageID +
-                ", ChatId=" + ChatId +
+                ", ChatId=" + chatId +
                 ", sender=" + sender +
                 ", receiver=" + receiver +
                 ", dateTime='" + dateTime + '\'' +

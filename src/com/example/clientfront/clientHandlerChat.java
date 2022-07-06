@@ -33,6 +33,7 @@ public class clientHandlerChat extends Thread {
                     System.out.println(ServerChat.clientSocketHashmap);
                 } else if (Objects.equals(portableData.getOrder(), "private chat message")) {
                     PrivateChatMessage privateChatMessage = (PrivateChatMessage) portableData.getObject();
+                    System.out.println(privateChatMessage);
                     PrivateChatQueries.insertNewMessagePrivateChat(privateChatMessage);
                     System.out.println(privateChatMessage);
                     sendMessagePrivateChat(privateChatMessage);
@@ -47,7 +48,7 @@ public class clientHandlerChat extends Thread {
     }
 
     public void sendMessagePrivateChat(PrivateChatMessage privateChatMessage) {
-        clientHandlerChat clientHandlerChat = ServerChat.clientSocketHashmap.get(privateChatMessage.getReceiver().getClientID());
+        clientHandlerChat clientHandlerChat = ServerChat.clientSocketHashmap.get(privateChatMessage.getSender().getClientID());
         if (clientHandlerChat == null) {
         } else {
             try {
