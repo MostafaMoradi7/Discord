@@ -3,7 +3,7 @@ package com.example.clientfront;
 import java.io.Serializable;
 
 public class PrivateChatMessage implements Serializable {
-    private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 4L;
     private int messageID;
     private int ChatId;
     private Client sender;

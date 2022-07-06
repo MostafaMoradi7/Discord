@@ -29,10 +29,9 @@ public class clientHandlerChat extends Thread {
                 PortableData portableData = (PortableData) objectInputStream.readObject();
                 if (Objects.equals(portableData.getOrder(), "main client")) {
                     Client client1 = (Client) portableData.getObject();
-                    ServerChat.clientSocketHashmap.put(client1, this);
+                    ServerChat.clientSocketHashmap.put(client1.getClientID(), this);
                     System.out.println(ServerChat.clientSocketHashmap);
                 } else if (Objects.equals(portableData.getOrder(), "private chat message")) {
-                    System.out.println("okkkkay");
                     PrivateChatMessage privateChatMessage = (PrivateChatMessage) portableData.getObject();
                     PrivateChatQueries.insertNewMessagePrivateChat(privateChatMessage);
                     System.out.println(privateChatMessage);
@@ -48,12 +47,10 @@ public class clientHandlerChat extends Thread {
     }
 
     public void sendMessagePrivateChat(PrivateChatMessage privateChatMessage) {
-        clientHandlerChat clientHandlerChat = ServerChat.clientSocketHashmap.get(privateChatMessage.getReceiver());
-        System.out.println("yesss");
+        clientHandlerChat clientHandlerChat = ServerChat.clientSocketHashmap.get(privateChatMessage.getReceiver().getClientID());
         if (clientHandlerChat == null) {
         } else {
             try {
-                System.out.println("im here");
                 clientHandlerChat.objectOutputStream.writeObject(new PortableData("new private message", privateChatMessage));
                 System.out.println("finish");
             } catch (IOException e) {
