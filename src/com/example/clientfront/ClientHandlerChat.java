@@ -49,7 +49,8 @@ public class ClientHandlerChat implements Runnable {
             PortableData newMessage;
             try {
                 if ((newMessage = (PortableData) reader.readObject()) != null){
-                    System.out.println(newMessage.getOrder() + ": " + newMessage.getObject());
+                    if (newMessage.getOrder().equals("new private message"))
+                    System.out.println(newMessage.getObject());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

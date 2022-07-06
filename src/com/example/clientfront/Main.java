@@ -1,6 +1,7 @@
 package com.example.clientfront;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -833,6 +834,7 @@ public class Main {
         System.out.println("""
                 [1] new private chat
                 [2] chat lists
+                [3] back
                 """);
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
@@ -843,13 +845,63 @@ public class Main {
             if (privateChatData == null){
                 System.out.println("No such client found");
             }else{
-
                 PrivateChatMessage privateChatMessage = new PrivateChatMessage(privateChat.getChatID(),clientHandler.returnMainClient(),privateChat.getClientONE(), LocalDateTime.now().toString()," I am mostafa",TypeMVF.TEXT);
                 chatHandler.sendMessage(new PortableData("private chat message",privateChatMessage));
-
             }
+        }else if (choice == 2){
+            ArrayList<PrivateChat> allPVs = new ArrayList<>();
+            allPVs = (ArrayList<PrivateChat>) clientHandler.sendAndReceive(
+                    new PortableData("private", clientHandler.returnMainClient())).getObject();
+            Client secondClient = null;
+            if (allPVs.size()!=0){
+                System.out.println("All your chats:");
+                int i = 1;
+                for (PrivateChat x: allPVs){
+                    if (x.getClientONE().getUsername().equals(clientHandler.returnMainClient().getUsername())){
+                        secondClient = x.getClientTWO();
+                    }else
+                        secondClient = x.getClientONE();
+                    System.out.println((i++) + "." + secondClient.getUsername());
+                }
+                System.out.println("*choose one: ");
+                int choice2;
+                do {
+                    choice2 = scanner.nextInt();
+                    if ((choice2 - 1)>allPVs.size())
+                        System.out.println("invalid input please try again...");
+                    else break;
+                }while (true);
+//                PortableData chosenChat = new PortableData("chosen chat", allPVs.get(choice2 - 1));
+//                PortableData response =  clientHandler.sendAndReceive(chosenChat);
+//                if (response.getOrder().equals(400)){
+//                    System.out.println("something went wrong, please try again later");
+//                    interactWithDirects(clientHandler, chatHandler);
+//                }else{
+//                    PrivateChat privateChat = (PrivateChat) response.getObject();
+                    System.out.println("you are now in " + secondClient.getUsername() + "'s chat.");
+                    System.out.println("enter any word to send message (enter $back to return)");
+                    String message;
+                    scanner.nextLine();
+                    do {
+                        message = scanner.nextLine();
+//                        if (message.trim().isEmpty())
+//                            continue;
+                        if (message.contains("$back")) {
+                            return;
+                        } else {
+                            PrivateChatMessage pvMessage = new PrivateChatMessage(allPVs.get(choice2 -1).getChatID(),clientHandler.returnMainClient()
+                                    ,secondClient,LocalDateTime.now().toString(),message,TypeMVF.TEXT);
+
+                            PortableData newMessage = new PortableData("private chat message", pvMessage);
+                            chatHandler.sendMessage(newMessage);
+                        }
+                    }while (true);
+//                }
+            }else {
+                System.out.println("you don't have any chats now.");
+                interactWithDirects(clientHandler, chatHandler);
+            }
+
         }
-//        PortableData data = clientHandler.sendAndReceive(new PortableData("private", clientHandler.returnMainClient()));
-//        System.out.println(data.getObject() + data.getOrder());
     }
 }

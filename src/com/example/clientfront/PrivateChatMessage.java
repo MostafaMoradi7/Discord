@@ -1,11 +1,9 @@
 package com.example.clientfront;
 
-import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 public class PrivateChatMessage implements Serializable {
-    @Serial
+
     private final static long serialVersionUID = 4L;
     private int messageID;
     private int chatId;
@@ -28,7 +26,37 @@ public class PrivateChatMessage implements Serializable {
         this.message = message;
     }
 
+    public int getMessageID() {
+        return messageID;
+    }
 
+    public int getChatId() {
+        return chatId;
+    }
 
+    public Client getSender() {
+        return sender;
+    }
 
+    public Client getReceiver() {
+        return receiver;
+    }
+
+    public String getDateTime() {
+        return dateTime;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public TypeMVF getType() {
+        return type;
+    }
+
+    @Override
+    public String toString(){
+        return sender.getUsername() +": " + message +"\n"
+                +"\t \t" + dateTime;
+    }
 }
