@@ -144,7 +144,7 @@ public class PrivateChatQueries {
             pstmt.setInt(2, privateChatMessage.getSender().getClientID());
             pstmt.setInt(3, privateChatMessage.getReceiver().getClientID());
             pstmt.setString(4, privateChatMessage.getMessage());
-            pstmt.setString(5, privateChatMessage.getDateTime().toString());
+            pstmt.setString(5, privateChatMessage.getDateTime());
             pstmt.executeUpdate();
             return 1;
         } catch (SQLException e) {

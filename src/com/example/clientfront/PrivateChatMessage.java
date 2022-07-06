@@ -53,7 +53,7 @@ public class PrivateChatMessage implements Serializable {
     public String toString() {
         return "PrivateChatMessage{" +
                 "messageID=" + messageID +
-                ", ChatId=" + chatId +
+                ", chatId=" + chatId +
                 ", sender=" + sender +
                 ", receiver=" + receiver +
                 ", dateTime='" + dateTime + '\'' +
