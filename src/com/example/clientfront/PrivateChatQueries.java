@@ -165,7 +165,7 @@ public class PrivateChatQueries {
             while (rst.next()) {
                 PrivateChatMessage privateChatMessage = new PrivateChatMessage(rst.getInt("id"), privateChat.getChatID(),
                         UserQueries.findUserWithId(rst.getInt("sender")), UserQueries.findUserWithId(rst.getInt("receiver"))
-                        , rst.getString("created_At"), rst.getString("body"));
+                        , rst.getString("created_At"), rst.getString("body"),null);
                 messages.add(privateChatMessage);
             }
             return new PortableData("privateChatMessage", messages);

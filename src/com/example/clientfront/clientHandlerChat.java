@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.util.Objects;
 
 public class clientHandlerChat extends Thread {
-    boolean firstTime = false;
     Socket socket;
     ObjectInputStream objectInputStream;
     ObjectOutputStream objectOutputStream;
@@ -22,41 +21,40 @@ public class clientHandlerChat extends Thread {
         }
     }
 
+
     @Override
     public void run() {
         try {
             while (true) {
                 PortableData portableData = (PortableData) objectInputStream.readObject();
-                if (!firstTime) {
+                if (Objects.equals(portableData.getOrder(), "main client")) {
                     Client client1 = (Client) portableData.getObject();
                     ServerChat.clientSocketHashmap.put(client1, this);
-                    if (client1 != null){
-                        firstTime = true;
-                    }
-                } else {
-                if (Objects.equals(portableData.getOrder(), "privateChatMessage")){
+                    System.out.println(ServerChat.clientSocketHashmap);
+                } else if (Objects.equals(portableData.getOrder(), "privateChatMessage")) {
                     PrivateChatMessage privateChatMessage = (PrivateChatMessage) portableData.getObject();
                     PrivateChatQueries.insertNewMessagePrivateChat(privateChatMessage);
                     sendMessagePrivateChat(privateChatMessage);
-                }else if (Objects.equals(portableData.getOrder(), "groupChatMessage")){
+                } else if (Objects.equals(portableData.getOrder(), "groupChatMessage")) {
 
                 }
-                }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void sendMessagePrivateChat(PrivateChatMessage privateChatMessage){
-            clientHandlerChat clientHandlerChat = ServerChat.clientSocketHashmap.get(privateChatMessage.getTo());
-            if (clientHandlerChat == null){
-                return;
-            }else {
-                try {
-                    clientHandlerChat.objectOutputStream.writeObject(privateChatMessage);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
+    public void sendMessagePrivateChat(PrivateChatMessage privateChatMessage) {
+        clientHandlerChat clientHandlerChat = ServerChat.clientSocketHashmap.get(privateChatMessage.getTo());
+        if (clientHandlerChat == null) {
+            return;
+        } else {
+            try {
+                clientHandlerChat.objectOutputStream.writeObject(privateChatMessage);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }
     }
 }

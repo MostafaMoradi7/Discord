@@ -9,14 +9,16 @@ public class PrivateChatMessage implements Serializable {
     private Client receiver;
     private String dateTime;
     private String message;
+    private TypeMVF type;
 
-    public PrivateChatMessage(int messageID, int chatId, Client sender, Client receiver, String dateTime, String message) {
+    public PrivateChatMessage(int messageID, int chatId, Client sender, Client receiver, String dateTime, String message,TypeMVF type) {
         this.messageID = messageID;
         ChatId = chatId;
         this.sender = sender;
         this.receiver = receiver;
         this.dateTime = dateTime;
         this.message = message;
+        this.type=type;
     }
 
     public int getMessageID() {

@@ -7,7 +7,7 @@ import java.net.Socket;
 import java.util.HashMap;
 
 public class ServerChat {
-    public  static HashMap<Client, clientHandlerChat> clientSocketHashmap;
+    public  static HashMap<Client, clientHandlerChat> clientSocketHashmap =new HashMap<>();
     public static void main(String[] args) {
         try {
             ServerSocket serverSocket = new ServerSocket(6001);
