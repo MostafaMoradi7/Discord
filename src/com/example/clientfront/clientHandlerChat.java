@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Objects;
 
 public class clientHandlerChat extends Thread {
     boolean firstTime = false;
@@ -33,9 +34,11 @@ public class clientHandlerChat extends Thread {
                         firstTime = true;
                     }
                 } else {
-                if (portableData.getObject() instanceof PrivateChatMessage privateChatMessage){
+                if (Objects.equals(portableData.getOrder(), "privateChatMessage")){
+                    PrivateChatMessage privateChatMessage = (PrivateChatMessage) portableData.getObject();
                     PrivateChatQueries.insertNewMessagePrivateChat(privateChatMessage);
-                }else if (portableData.getObject() instanceof GroupMessage){
+                    sendMessagePrivateChat(privateChatMessage);
+                }else if (Objects.equals(portableData.getOrder(), "groupChatMessage")){
 
                 }
                 }
@@ -44,7 +47,16 @@ public class clientHandlerChat extends Thread {
             e.printStackTrace();
         }
     }
-    public void sendMessage(){
-
+    public void sendMessagePrivateChat(PrivateChatMessage privateChatMessage){
+            clientHandlerChat clientHandlerChat = ServerChat.clientSocketHashmap.get(privateChatMessage.getTo());
+            if (clientHandlerChat == null){
+                return;
+            }else {
+                try {
+                    clientHandlerChat.objectOutputStream.writeObject(privateChatMessage);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
     }
 }
