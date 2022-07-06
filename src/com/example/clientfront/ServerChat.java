@@ -4,18 +4,18 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
+public class ServerChat {
     public static void main(String[] args) {
         try {
-            ServerSocket serverSocket = new ServerSocket(6000);
+            ServerSocket serverSocket = new ServerSocket(6001);
             System.out.println("server started ...");
             while (true){
-                Socket client = serverSocket.accept();
+                Socket socket = serverSocket.accept();
                 System.out.println("client connected ...");
-                ClientHandler clientHandler = new ClientHandler(client);
-                clientHandler.start();
+                clientHandlerChat clientHandlerChat = new clientHandlerChat(socket);
+                clientHandlerChat.start();
             }
-        }catch (IOException  e){
+        }catch (IOException e){
             e.getStackTrace();
         }
     }

@@ -32,7 +32,6 @@ public class ClientHandler extends Thread {
                     PortableData sendResponse = UserQueries.insertNewUserData(client);
                     //System.out.println(sendResponse);
                     objectOutputStream.writeObject(sendResponse);
-                    // login done
                 } else if (Objects.equals(portableData.getOrder(), "login")) {
                     Client client = (Client) portableData.getObject();
                     PortableData sendResponse = UserQueries.checkLogin(client);
