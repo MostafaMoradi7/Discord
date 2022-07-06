@@ -142,8 +142,8 @@ public class PrivateChatQueries {
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, privateChatMessage.getChatId());
-            pstmt.setInt(2, privateChatMessage.getFrom().getClientID());
-            pstmt.setInt(3, privateChatMessage.getTo().getClientID());
+            pstmt.setInt(2, privateChatMessage.getSender().getClientID());
+            pstmt.setInt(3, privateChatMessage.getReceiver().getClientID());
             pstmt.setString(4, privateChatMessage.getMessage());
             pstmt.setString(5, privateChatMessage.getDateTime().toString());
             pstmt.executeUpdate();
@@ -163,7 +163,7 @@ public class PrivateChatQueries {
             pstmt.setInt(1, privateChat.getChatID());
             ResultSet rst = pstmt.executeQuery();
             while (rst.next()) {
-                PrivateChatMessage privateChatMessage = new PrivateChatMessage(rst.getInt("id"), privateChat.getChatID(),
+                PrivateChatMessage privateChatMessage = new PrivateChatMessage( privateChat.getChatID(),
                         UserQueries.findUserWithId(rst.getInt("sender")), UserQueries.findUserWithId(rst.getInt("receiver"))
                         , rst.getString("created_At"), rst.getString("body"),null);
                 messages.add(privateChatMessage);

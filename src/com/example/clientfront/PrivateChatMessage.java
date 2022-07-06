@@ -3,6 +3,7 @@ package com.example.clientfront;
 import java.io.Serializable;
 
 public class PrivateChatMessage implements Serializable {
+    private static final long serialVersionUID = 3L;
     private int messageID;
     private int ChatId;
     private Client sender;
@@ -11,9 +12,8 @@ public class PrivateChatMessage implements Serializable {
     private String message;
     private TypeMVF type;
 
-    public PrivateChatMessage(int messageID, int chatId, Client sender, Client receiver, String dateTime, String message,TypeMVF type) {
-        this.messageID = messageID;
-        ChatId = chatId;
+    public PrivateChatMessage(int chatId, Client sender, Client receiver, String dateTime, String message,TypeMVF type) {
+        this.ChatId = chatId;
         this.sender = sender;
         this.receiver = receiver;
         this.dateTime = dateTime;
@@ -25,11 +25,15 @@ public class PrivateChatMessage implements Serializable {
         return messageID;
     }
 
-    public Client getFrom() {
+    public int getChatId() {
+        return ChatId;
+    }
+
+    public Client getSender() {
         return sender;
     }
 
-    public Client getTo() {
+    public Client getReceiver() {
         return receiver;
     }
 
@@ -37,23 +41,24 @@ public class PrivateChatMessage implements Serializable {
         return dateTime;
     }
 
-    public String  getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public int getChatId() {
-        return ChatId;
+    public TypeMVF getType() {
+        return type;
     }
 
     @Override
     public String toString() {
-        return "com.example.clientfront.PrivateChatMessage{" +
+        return "PrivateChatMessage{" +
                 "messageID=" + messageID +
                 ", ChatId=" + ChatId +
-                ", from=" + sender +
-                ", to=" + receiver +
+                ", sender=" + sender +
+                ", receiver=" + receiver +
                 ", dateTime='" + dateTime + '\'' +
                 ", message='" + message + '\'' +
+                ", type=" + type +
                 '}';
     }
 }
