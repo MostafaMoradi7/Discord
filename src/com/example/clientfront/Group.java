@@ -1,4 +1,4 @@
-
+package com.example.clientfront;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-
+package com.example.clientfront;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -31,5 +31,18 @@ public class PrivateChat implements Serializable {
 
     public void addMessage(PrivateChatMessage message) {
         messages.add(message);
+    }
+
+    @Override
+    public String toString() {
+        return "PrivateChat [chatID=" + chatID + ", clientONE=" + clientONE + ", clientTWO=" + clientTWO + ", messages=" + messages + "]";
+    }
+
+    public int getChatID() {
+        return chatID;
+    }
+
+    public ArrayList<PrivateChatMessage> getMessages() {
+        return messages;
     }
 }

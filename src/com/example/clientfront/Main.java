@@ -1,3 +1,6 @@
+package com.example.clientfront;
+
+import java.time.LocalDateTime;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -7,7 +10,6 @@ public class Main {
 
     public static void main(String[] args) {
         ClientHandler clientHandler = new ClientHandler();
-
         /*
                 here the client logs into the system and gets a socket to communicate with the server
                                                                                                             */
@@ -25,10 +27,11 @@ public class Main {
                 """);
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
+        ClientHandlerChat chatHandler = new ClientHandlerChat();
+        chatHandler.sendMessage(new PortableData("main client", clientHandler.returnMainClient()));
         switch (input) {
             case "1" -> {
-                System.out.println("Hello");
-                interactWithDirects(clientHandler);
+                interactWithDirects(clientHandler, chatHandler);
             }
             case "2" -> serverConnection(clientHandler);
             case "3" -> logout();
@@ -54,12 +57,9 @@ public class Main {
                 """);
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
-        boolean loggedIn2 = false;
-
         switch (choice) {
             case 1 -> {
                 if (clientHandler.loginClient() != null) {
-                    loggedIn2 = true;
                     loggedIn = true;
                 } else
                     return false;
@@ -67,7 +67,6 @@ public class Main {
             case 2 -> {
                 if (clientHandler.registerClient() != null) {
                     System.out.println("Registration successful");
-                    loggedIn2 = false;
                     if (login(clientHandler))
                         loggedIn = true;
                     else
@@ -104,18 +103,11 @@ public class Main {
                 break;
         } while (true);
         Server newServer = new Server(clientHandler.returnMainClient(), clientHandler, name);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        Thread clientInputHandlerThread = new Thread(clientInputHandler);
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread clientOutputHandlerThread = new Thread(clientOutputHandler);
 
-        PortableData portableData = new PortableData("new Server", newServer);
-        clientOutputHandler.setPortableData(portableData);
-        clientOutputHandlerThread.start();
-        clientInputHandlerThread.start();
+        PortableData portableData = new PortableData("new com.example.clientfront.Server", newServer);
 
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(portableData)) == null) {
             //wait for server to be created
         }
         if (response.getOrder().equals("successful")) {
@@ -143,17 +135,9 @@ public class Main {
         Server searchingServer = new Server(null, null, name);
         PortableData portableData = new PortableData("find server", searchingServer);
 
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        Thread clientInputHandlerThread = new Thread(clientInputHandler);
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread clientOutputHandlerThread = new Thread(clientOutputHandler);
-
-        clientOutputHandler.setPortableData(portableData);
-        clientOutputHandlerThread.start();
-        clientInputHandlerThread.start();
 
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(portableData)) == null) {
             //wait for server to be created
         }
         if(response.getOrder().equals("successful")){
@@ -184,17 +168,8 @@ public class Main {
         } while (true);
         PortableData portableData = new PortableData("find server", searchingServer);
 
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        Thread clientInputHandlerThread = new Thread(clientInputHandler);
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread clientOutputHandlerThread = new Thread(clientOutputHandler);
-
-        clientOutputHandler.setPortableData(portableData);
-        clientOutputHandlerThread.start();
-        clientInputHandlerThread.start();
-
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(portableData)) == null) {
             //wait for server to be created
         }
         if(response.getOrder().equals("successful")){
@@ -257,185 +232,185 @@ public class Main {
         }
     }
 
-    public static void interactWithServer(ClientHandler clientHandler) {
-        boolean isAdmin = false;
-        boolean inCreator = false;
-        if (workingServer.getServerMainCreator().equals(clientHandler.returnMainClient().getUsername())) {
-            isAdmin = true;
-            inCreator = true;
-        } else if (workingServer.getAdmins().contains(clientHandler.returnMainClient())) {
-            isAdmin = true;
-        }
-
-        if (inCreator) {
-            System.out.println("""
-                    [$delete-server] delete server
-                    [$create-channel] new channel
-                    [$create-group] new group 
-                    [$delete-channel] delete channel 
-                    [$delete-group] delete group 
-                    [$add-admin] add admin
-                    [$remove-admin] remove admin
-                    """);
-        }
-        if (isAdmin) {
-            System.out.println("""
-                    [$kick] kick a user out
-                    [$ban] ban a user
-                    [$unban] unban a user
-                   
-                    """);
-        }
-
-        System.out.println("""
-                [1] list channels
-                [2] list groups
-                [3] Exit Server
-                """);
-
-        Scanner scanner = new Scanner(System.in);
-        String choice = scanner.nextLine();
-        boolean continueLoop = true;
-        while (!choice.equals("3") && continueLoop) {
-            switch (choice) {
-                case "1" -> {
-                    Channel channel = channelChosen(clientHandler);
-                    ChannelChatting channelChatting = new ChannelChatting(channel, clientHandler.getClientSocket());
-                    Thread channelChattingThread = new Thread(channelChatting);
-                    channelChattingThread.start();
-                    continueLoop = false;
-                }
-                case "2" -> {
-                    Group group = groupChosen(clientHandler);
-                    GroupChatting groupChatting = new GroupChatting(clientHandler,group);
-                    Thread groupChattingThread = new Thread(groupChatting);
-                    groupChattingThread.start();
-                    continueLoop = false;
-                }
-
-                case "$delete-server" -> {
-                    if (isAdmin) {
-                        if (deleteServer(clientHandler)){
-                            System.out.println("server deleted");
-                        }else
-                            System.out.println("server could not be deleted");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$create-channel" -> {
-                    if (isAdmin) {
-                        if (createChannel(clientHandler)) {
-                            System.out.println("channel created");
-                        } else {
-                            System.out.println("channel could not be created");
-                        }
-                        continueLoop = false;
-                    }else {
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$create-group" -> {
-                    if (isAdmin) {
-                        if (createGroup(clientHandler)) {
-                            System.out.println("group created");
-                        } else {
-                            System.out.println("group could not be created");
-                        }
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$delete-channel" -> {
-                    if (isAdmin) {
-                        if (deleteChannel(clientHandler))
-                            System.out.println("channel deleted");
-                        else
-                            System.out.println("channel not found or could not be deleted");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$delete-group" -> {
-                    if (isAdmin) {
-                        if (deleteGroup(clientHandler))
-                            System.out.println("group deleted");
-                        else
-                            System.out.println("group not found or could not be deleted");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$add-admin" -> {
-                    if (isAdmin) {
-                        if (addAdmin(clientHandler))
-                            System.out.println("admin added");
-                        else
-                            System.out.println("admin could not be added");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$remove-admin" -> {
-                    if (isAdmin) {
-                        if (removeAdmin(clientHandler))
-                            System.out.println("admin removed");
-                        else
-                            System.out.println("admin could not be removed");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$kick" -> {
-                    if (isAdmin) {
-                        if (kick(clientHandler))
-                            System.out.println("user kicked");
-                        else
-                            System.out.println("user could not be kicked");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$ban" -> {
-                    if (isAdmin) {
-                        if (ban(clientHandler))
-                            System.out.println("user banned");
-                        else
-                            System.out.println("user could not be banned");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$unban" -> {
-                    if (isAdmin) {
-                        if (unban(clientHandler))
-                            System.out.println("user unbanned");
-                        else
-                            System.out.println("user could not be unbanned");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                default -> {
-                    System.out.println("invalid choice, try again: ");
-                    choice = scanner.nextLine();
-                }
-            }
-        }
-
-        logout();
-        workingServer = null;
-        login(clientHandler);
-    }
+//    public static void interactWithServer(ClientHandler clientHandler) {
+//        boolean isAdmin = false;
+//        boolean inCreator = false;
+//        if (workingServer.getServerMainCreator().equals(clientHandler.returnMainClient().getUsername())) {
+//            isAdmin = true;
+//            inCreator = true;
+//        } else if (workingServer.getAdmins().contains(clientHandler.returnMainClient())) {
+//            isAdmin = true;
+//        }
+//
+//        if (inCreator) {
+//            System.out.println("""
+//                    [$delete-server] delete server
+//                    [$create-channel] new channel
+//                    [$create-group] new group
+//                    [$delete-channel] delete channel
+//                    [$delete-group] delete group
+//                    [$add-admin] add admin
+//                    [$remove-admin] remove admin
+//                    """);
+//        }
+//        if (isAdmin) {
+//            System.out.println("""
+//                    [$kick] kick a user out
+//                    [$ban] ban a user
+//                    [$unban] unban a user
+//
+//                    """);
+//        }
+//
+//        System.out.println("""
+//                [1] list channels
+//                [2] list groups
+//                [3] Exit com.example.clientfront.Server
+//                """);
+//
+//        Scanner scanner = new Scanner(System.in);
+//        String choice = scanner.nextLine();
+//        boolean continueLoop = true;
+//        while (!choice.equals("3") && continueLoop) {
+//            switch (choice) {
+//                case "1" -> {
+//                    Channel channel = channelChosen(clientHandler);
+//                    ChannelChatting channelChatting = new ChannelChatting(channel, clientHandler.getClientSocket());
+//                    Thread channelChattingThread = new Thread(channelChatting);
+//                    channelChattingThread.start();
+//                    continueLoop = false;
+//                }
+//                case "2" -> {
+//                    Group group = groupChosen(clientHandler);
+//                    GroupChatting groupChatting = new GroupChatting(clientHandler,group);
+//                    Thread groupChattingThread = new Thread(groupChatting);
+//                    groupChattingThread.start();
+//                    continueLoop = false;
+//                }
+//
+//                case "$delete-server" -> {
+//                    if (isAdmin) {
+//                        if (deleteServer(clientHandler)){
+//                            System.out.println("server deleted");
+//                        }else
+//                            System.out.println("server could not be deleted");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$create-channel" -> {
+//                    if (isAdmin) {
+//                        if (createChannel(clientHandler)) {
+//                            System.out.println("channel created");
+//                        } else {
+//                            System.out.println("channel could not be created");
+//                        }
+//                        continueLoop = false;
+//                    }else {
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$create-group" -> {
+//                    if (isAdmin) {
+//                        if (createGroup(clientHandler)) {
+//                            System.out.println("group created");
+//                        } else {
+//                            System.out.println("group could not be created");
+//                        }
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$delete-channel" -> {
+//                    if (isAdmin) {
+//                        if (deleteChannel(clientHandler))
+//                            System.out.println("channel deleted");
+//                        else
+//                            System.out.println("channel not found or could not be deleted");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$delete-group" -> {
+//                    if (isAdmin) {
+//                        if (deleteGroup(clientHandler))
+//                            System.out.println("group deleted");
+//                        else
+//                            System.out.println("group not found or could not be deleted");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$add-admin" -> {
+//                    if (isAdmin) {
+//                        if (addAdmin(clientHandler))
+//                            System.out.println("admin added");
+//                        else
+//                            System.out.println("admin could not be added");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$remove-admin" -> {
+//                    if (isAdmin) {
+//                        if (removeAdmin(clientHandler))
+//                            System.out.println("admin removed");
+//                        else
+//                            System.out.println("admin could not be removed");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$kick" -> {
+//                    if (isAdmin) {
+//                        if (kick(clientHandler))
+//                            System.out.println("user kicked");
+//                        else
+//                            System.out.println("user could not be kicked");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$ban" -> {
+//                    if (isAdmin) {
+//                        if (ban(clientHandler))
+//                            System.out.println("user banned");
+//                        else
+//                            System.out.println("user could not be banned");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$unban" -> {
+//                    if (isAdmin) {
+//                        if (unban(clientHandler))
+//                            System.out.println("user unbanned");
+//                        else
+//                            System.out.println("user could not be unbanned");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                default -> {
+//                    System.out.println("invalid choice, try again: ");
+//                    choice = scanner.nextLine();
+//                }
+//            }
+//        }
+//
+//        logout();
+//        workingServer = null;
+//        login(clientHandler);
+//    }
 
     private static Channel channelChosen(ClientHandler clientHandler){
         Channel chosenChannel = null;
@@ -458,16 +433,8 @@ public class Main {
         }
 
         PortableData data = new PortableData("chosen channel", chosenChannel);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
-
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data))== null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -500,16 +467,8 @@ public class Main {
         }
 
         PortableData data = new PortableData("chosen group", chosenGroup);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
-
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -527,16 +486,8 @@ public class Main {
         String choice = scanner.nextLine();
         if (choice.equals("y")) {
             PortableData data = new PortableData("delete server", workingServer);
-            ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-            ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-            Thread tOUT = new Thread(clientOutputHandler);
-            Thread tIN = new Thread(clientInputHandler);
-            clientOutputHandler.setPortableData(data);
-            tOUT.start();
-            tIN.start();
-
             PortableData response;
-            while ((response = clientInputHandler.getPortableData()) == null) {
+            while ((response = clientHandler.sendAndReceive(data)) == null) {
                 //wait for response
             }
             if (response.getOrder().equals("successful")) {
@@ -566,16 +517,9 @@ public class Main {
         Channel newChannel = new Channel(null ,name,clientHandler.returnMainClient());
 
         PortableData data = new PortableData("create channel", newChannel);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
 
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -605,16 +549,8 @@ public class Main {
         Group newGroup = new Group(null ,name,clientHandler.returnMainClient());
 
         PortableData data = new PortableData("create group", newGroup);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
-
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -650,16 +586,8 @@ public class Main {
         }
 
         PortableData data = new PortableData("delete channel", channelD);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
-
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -693,16 +621,8 @@ public class Main {
         }
 
         PortableData data = new PortableData("delete group", groupD);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
-
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -738,15 +658,8 @@ public class Main {
             return false;
         }
         PortableData data = new PortableData("add admin", client);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -783,15 +696,9 @@ public class Main {
             return false;
         }
         PortableData data = new PortableData("remove admin", client);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
+
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -828,15 +735,8 @@ public class Main {
             return false;
         }
         PortableData data = new PortableData("kick", client);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -873,15 +773,8 @@ public class Main {
             return false;
         }
         PortableData data = new PortableData("ban", client);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -918,15 +811,8 @@ public class Main {
             return false;
         }
         PortableData data = new PortableData("unban", client);
-        ClientInputHandler clientInputHandler = new ClientInputHandler(clientHandler, clientHandler.getClientSocket());
-        ClientOutputHandler clientOutputHandler = new ClientOutputHandler(clientHandler.getClientSocket(), clientHandler.returnMainClient());
-        Thread tOUT = new Thread(clientOutputHandler);
-        Thread tIN = new Thread(clientInputHandler);
-        clientOutputHandler.setPortableData(data);
-        tOUT.start();
-        tIN.start();
         PortableData response;
-        while ((response = clientInputHandler.getPortableData()) == null) {
+        while ((response = clientHandler.sendAndReceive(data)) == null) {
             //wait for response
         }
         if(response.getOrder().equals("successful")){
@@ -941,7 +827,9 @@ public class Main {
         }
     }
 
-    private static void interactWithDirects(ClientHandler clientHandler){
+    private static void interactWithDirects(ClientHandler clientHandler,ClientHandlerChat chatHandler){
+        Thread clientHandlerChatThread = new Thread(chatHandler);
+        clientHandlerChatThread.start();
         System.out.println("""
                 [1] new private chat
                 [2] chat lists
@@ -949,14 +837,19 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
         if (choice == 1){
-            PortableData data = clientHandler.sendAndReceive(new PortableData("new private",clientHandler.findClient()));
-            if (data == null){
+            PortableData privateChatData = clientHandler.sendAndReceive(new PortableData("new private chat",new PrivateChat(clientHandler.returnMainClient(),clientHandler.findClient())));
+            PrivateChat privateChat = (PrivateChat) privateChatData.getObject();
+            System.out.println(privateChat);
+            if (privateChatData == null){
                 System.out.println("No such client found");
             }else{
 
+                PrivateChatMessage privateChatMessage = new PrivateChatMessage(privateChat.getChatID(),clientHandler.returnMainClient(),privateChat.getClientONE(), LocalDateTime.now().toString()," I am mostafa",TypeMVF.TEXT);
+                chatHandler.sendMessage(new PortableData("private chat message",privateChatMessage));
+
             }
         }
-        PortableData data = clientHandler.sendAndReceive(new PortableData("private", clientHandler.returnMainClient()));
-        System.out.println(data.getObject() + data.getOrder());
+//        PortableData data = clientHandler.sendAndReceive(new PortableData("private", clientHandler.returnMainClient()));
+//        System.out.println(data.getObject() + data.getOrder());
     }
 }

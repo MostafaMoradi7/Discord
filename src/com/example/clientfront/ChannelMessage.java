@@ -1,7 +1,9 @@
+package com.example.clientfront;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ChannelMessage extends Message implements Serializable {
+public class ChannelMessage implements Serializable {
     private String channelName;
     private Object body;
     private Client admin;
@@ -9,13 +11,13 @@ public class ChannelMessage extends Message implements Serializable {
     private ArrayList<Client> admins;
     private ArrayList<ChannelMessage> messages;
 
-    public ChannelMessage(String channelName, Object body, Client admin, TypeMVF type) {
-        super(type, admin, body);
-        this.channelName = channelName;
-        members = new ArrayList<>();
-        admins = new ArrayList<>();
-        messages = new ArrayList<>();
-    }
+//    public ChannelMessage(String channelName, Object body, Client admin, TypeMVF type) {
+//        super(type, admin, body);
+//        this.channelName = channelName;
+//        members = new ArrayList<>();
+//        admins = new ArrayList<>();
+//        messages = new ArrayList<>();
+//    }
 
     public String getChannelName() {
         return channelName;

@@ -1,3 +1,5 @@
+package com.example.clientfront;
+
 public class InvalidInput extends Exception {
     public InvalidInput(String message) {
         super(message);
@@ -5,7 +7,7 @@ public class InvalidInput extends Exception {
 
     @Override
     public String toString() {
-        return "InvalidInput: " + getMessage();
+        return "com.example.clientfront.InvalidInput: " + getMessage();
     }
 
 }

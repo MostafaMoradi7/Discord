@@ -1,3 +1,5 @@
+package com.example.clientfront;
+
 public class ChatServices implements Runnable{
     private ClientHandler clientHandler;
     private Client client;

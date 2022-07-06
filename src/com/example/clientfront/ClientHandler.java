@@ -1,3 +1,5 @@
+package com.example.clientfront;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -19,9 +21,9 @@ public class ClientHandler implements Runnable {
 
     public ClientHandler() {
         try {
-            clientSocket = new Socket("192.168.43.42", 6000);
+            clientSocket = new Socket("192.168.43.30", 6000);
             outputHandler = new ClientOutputHandler(clientSocket, client);
-            inputHandler = new ClientInputHandler(this, clientSocket);
+            inputHandler = new ClientInputHandler(clientSocket);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -34,6 +36,10 @@ public class ClientHandler implements Runnable {
 
     public void setPortableData(PortableData portableData) {
         this.portableData = portableData;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
 
@@ -152,7 +158,7 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public Client findClient(){
+    public Client findClient() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please Enter Required information");
         System.out.println("clients username: (must be filled!)");
@@ -161,23 +167,23 @@ public class ClientHandler implements Runnable {
             username = scanner.nextLine();
             if (username.trim().isEmpty() && Pattern.matches("^[a-zA-Z0-9]*$", username) == false) {
                 System.out.println("please enter a valid username!");
-            }else{
+            } else {
                 break;
             }
-        }while(true);
+        } while (true);
         Client client = new Client(username, null, null, null, null);
         // DATA IS SENT TO THE SERVER TO FIND THE CLIENT
-        PortableData portableData = new PortableData("find client", client);
+        PortableData portableData = new PortableData("findUser", client);
         PortableData receivedData = sendAndReceive(portableData);
 
         if (receivedData.getOrder().equals("unsuccessful")) {
             System.out.println("no client found");
             return null;
+        } else {
+            System.out.println("client found");
+            this.client = (Client) receivedData.getObject();
+            return (Client) receivedData.getObject();
         }
-
-        System.out.println("client found");
-        this.client = (Client) receivedData.getObject();
-        return (Client) receivedData.getObject();
     }
 
     public void createServer(){

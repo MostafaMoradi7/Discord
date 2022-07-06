@@ -1,3 +1,5 @@
+package com.example.clientfront;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -47,8 +49,8 @@ public class ClientOutputHandler implements Runnable{
 //                    while (!message.contains("$quit")) {
 //                        message = message.concat(scanner.nextLine());
 //                    }
-//                    PrivateChatMessage privateChatMessage = new PrivateChatMessage(TypeMVF.TEXT,client, pvChat.getClientTWO(), message);
-//                    PortableData portableData = new PortableData("PV Message", privateChatMessage);
+//                    com.example.clientfront.PrivateChatMessage privateChatMessage = new com.example.clientfront.PrivateChatMessage(com.example.clientfront.TypeMVF.TEXT,client, pvChat.getClientTWO(), message);
+//                    com.example.clientfront.PortableData portableData = new com.example.clientfront.PortableData("PV com.example.clientfront.Message", privateChatMessage);
 //                    writer.writeObject(portableData);
 //
 //

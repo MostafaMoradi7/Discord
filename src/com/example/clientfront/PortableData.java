@@ -1,3 +1,5 @@
+package com.example.clientfront;
+
 import java.io.Serializable;
 
 public class PortableData implements Serializable {

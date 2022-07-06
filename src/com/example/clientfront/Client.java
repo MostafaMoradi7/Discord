@@ -1,3 +1,5 @@
+package com.example.clientfront;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -56,6 +58,10 @@ public class Client implements Serializable {
 
     public int getClientID() {
         return clientID;
+    }
+
+    public void setID(int id){
+        this.clientID = id;
     }
 
     public Server getDesiredServer(String serverName){

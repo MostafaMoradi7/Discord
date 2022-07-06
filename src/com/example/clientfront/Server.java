@@ -1,3 +1,5 @@
+package com.example.clientfront;
+
 import java.util.HashSet;
 
 public class Server extends Chat{
