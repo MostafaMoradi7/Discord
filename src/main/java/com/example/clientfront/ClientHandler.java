@@ -21,7 +21,7 @@ public class ClientHandler implements Runnable {
 
     public ClientHandler() {
         try {
-            clientSocket = new Socket("192.168.43.42", 6000);
+            clientSocket = new Socket("192.168.43.30", 6000);
             outputHandler = new ClientOutputHandler(clientSocket, client);
             inputHandler = new ClientInputHandler(this, clientSocket);
 

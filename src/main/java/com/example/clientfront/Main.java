@@ -259,185 +259,185 @@ public class Main {
         }
     }
 
-    public static void interactWithServer(ClientHandler clientHandler) {
-        boolean isAdmin = false;
-        boolean inCreator = false;
-        if (workingServer.getServerMainCreator().equals(clientHandler.returnMainClient().getUsername())) {
-            isAdmin = true;
-            inCreator = true;
-        } else if (workingServer.getAdmins().contains(clientHandler.returnMainClient())) {
-            isAdmin = true;
-        }
-
-        if (inCreator) {
-            System.out.println("""
-                    [$delete-server] delete server
-                    [$create-channel] new channel
-                    [$create-group] new group 
-                    [$delete-channel] delete channel 
-                    [$delete-group] delete group 
-                    [$add-admin] add admin
-                    [$remove-admin] remove admin
-                    """);
-        }
-        if (isAdmin) {
-            System.out.println("""
-                    [$kick] kick a user out
-                    [$ban] ban a user
-                    [$unban] unban a user
-                   
-                    """);
-        }
-
-        System.out.println("""
-                [1] list channels
-                [2] list groups
-                [3] Exit com.example.clientfront.Server
-                """);
-
-        Scanner scanner = new Scanner(System.in);
-        String choice = scanner.nextLine();
-        boolean continueLoop = true;
-        while (!choice.equals("3") && continueLoop) {
-            switch (choice) {
-                case "1" -> {
-                    Channel channel = channelChosen(clientHandler);
-                    ChannelChatting channelChatting = new ChannelChatting(channel, clientHandler.getClientSocket());
-                    Thread channelChattingThread = new Thread(channelChatting);
-                    channelChattingThread.start();
-                    continueLoop = false;
-                }
-                case "2" -> {
-                    Group group = groupChosen(clientHandler);
-                    GroupChatting groupChatting = new GroupChatting(clientHandler,group);
-                    Thread groupChattingThread = new Thread(groupChatting);
-                    groupChattingThread.start();
-                    continueLoop = false;
-                }
-
-                case "$delete-server" -> {
-                    if (isAdmin) {
-                        if (deleteServer(clientHandler)){
-                            System.out.println("server deleted");
-                        }else
-                            System.out.println("server could not be deleted");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$create-channel" -> {
-                    if (isAdmin) {
-                        if (createChannel(clientHandler)) {
-                            System.out.println("channel created");
-                        } else {
-                            System.out.println("channel could not be created");
-                        }
-                        continueLoop = false;
-                    }else {
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$create-group" -> {
-                    if (isAdmin) {
-                        if (createGroup(clientHandler)) {
-                            System.out.println("group created");
-                        } else {
-                            System.out.println("group could not be created");
-                        }
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$delete-channel" -> {
-                    if (isAdmin) {
-                        if (deleteChannel(clientHandler))
-                            System.out.println("channel deleted");
-                        else
-                            System.out.println("channel not found or could not be deleted");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$delete-group" -> {
-                    if (isAdmin) {
-                        if (deleteGroup(clientHandler))
-                            System.out.println("group deleted");
-                        else
-                            System.out.println("group not found or could not be deleted");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$add-admin" -> {
-                    if (isAdmin) {
-                        if (addAdmin(clientHandler))
-                            System.out.println("admin added");
-                        else
-                            System.out.println("admin could not be added");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$remove-admin" -> {
-                    if (isAdmin) {
-                        if (removeAdmin(clientHandler))
-                            System.out.println("admin removed");
-                        else
-                            System.out.println("admin could not be removed");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$kick" -> {
-                    if (isAdmin) {
-                        if (kick(clientHandler))
-                            System.out.println("user kicked");
-                        else
-                            System.out.println("user could not be kicked");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$ban" -> {
-                    if (isAdmin) {
-                        if (ban(clientHandler))
-                            System.out.println("user banned");
-                        else
-                            System.out.println("user could not be banned");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                case "$unban" -> {
-                    if (isAdmin) {
-                        if (unban(clientHandler))
-                            System.out.println("user unbanned");
-                        else
-                            System.out.println("user could not be unbanned");
-                        continueLoop = false;
-                    }else{
-                        System.out.println("you are not an admin");
-                    }
-                }
-                default -> {
-                    System.out.println("invalid choice, try again: ");
-                    choice = scanner.nextLine();
-                }
-            }
-        }
-
-        logout();
-        workingServer = null;
-        login(clientHandler);
-    }
+//    public static void interactWithServer(ClientHandler clientHandler) {
+//        boolean isAdmin = false;
+//        boolean inCreator = false;
+//        if (workingServer.getServerMainCreator().equals(clientHandler.returnMainClient().getUsername())) {
+//            isAdmin = true;
+//            inCreator = true;
+//        } else if (workingServer.getAdmins().contains(clientHandler.returnMainClient())) {
+//            isAdmin = true;
+//        }
+//
+//        if (inCreator) {
+//            System.out.println("""
+//                    [$delete-server] delete server
+//                    [$create-channel] new channel
+//                    [$create-group] new group
+//                    [$delete-channel] delete channel
+//                    [$delete-group] delete group
+//                    [$add-admin] add admin
+//                    [$remove-admin] remove admin
+//                    """);
+//        }
+//        if (isAdmin) {
+//            System.out.println("""
+//                    [$kick] kick a user out
+//                    [$ban] ban a user
+//                    [$unban] unban a user
+//
+//                    """);
+//        }
+//
+//        System.out.println("""
+//                [1] list channels
+//                [2] list groups
+//                [3] Exit com.example.clientfront.Server
+//                """);
+//
+//        Scanner scanner = new Scanner(System.in);
+//        String choice = scanner.nextLine();
+//        boolean continueLoop = true;
+//        while (!choice.equals("3") && continueLoop) {
+//            switch (choice) {
+//                case "1" -> {
+//                    Channel channel = channelChosen(clientHandler);
+//                    ChannelChatting channelChatting = new ChannelChatting(channel, clientHandler.getClientSocket());
+//                    Thread channelChattingThread = new Thread(channelChatting);
+//                    channelChattingThread.start();
+//                    continueLoop = false;
+//                }
+//                case "2" -> {
+//                    Group group = groupChosen(clientHandler);
+//                    GroupChatting groupChatting = new GroupChatting(clientHandler,group);
+//                    Thread groupChattingThread = new Thread(groupChatting);
+//                    groupChattingThread.start();
+//                    continueLoop = false;
+//                }
+//
+//                case "$delete-server" -> {
+//                    if (isAdmin) {
+//                        if (deleteServer(clientHandler)){
+//                            System.out.println("server deleted");
+//                        }else
+//                            System.out.println("server could not be deleted");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$create-channel" -> {
+//                    if (isAdmin) {
+//                        if (createChannel(clientHandler)) {
+//                            System.out.println("channel created");
+//                        } else {
+//                            System.out.println("channel could not be created");
+//                        }
+//                        continueLoop = false;
+//                    }else {
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$create-group" -> {
+//                    if (isAdmin) {
+//                        if (createGroup(clientHandler)) {
+//                            System.out.println("group created");
+//                        } else {
+//                            System.out.println("group could not be created");
+//                        }
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$delete-channel" -> {
+//                    if (isAdmin) {
+//                        if (deleteChannel(clientHandler))
+//                            System.out.println("channel deleted");
+//                        else
+//                            System.out.println("channel not found or could not be deleted");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$delete-group" -> {
+//                    if (isAdmin) {
+//                        if (deleteGroup(clientHandler))
+//                            System.out.println("group deleted");
+//                        else
+//                            System.out.println("group not found or could not be deleted");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$add-admin" -> {
+//                    if (isAdmin) {
+//                        if (addAdmin(clientHandler))
+//                            System.out.println("admin added");
+//                        else
+//                            System.out.println("admin could not be added");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$remove-admin" -> {
+//                    if (isAdmin) {
+//                        if (removeAdmin(clientHandler))
+//                            System.out.println("admin removed");
+//                        else
+//                            System.out.println("admin could not be removed");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$kick" -> {
+//                    if (isAdmin) {
+//                        if (kick(clientHandler))
+//                            System.out.println("user kicked");
+//                        else
+//                            System.out.println("user could not be kicked");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$ban" -> {
+//                    if (isAdmin) {
+//                        if (ban(clientHandler))
+//                            System.out.println("user banned");
+//                        else
+//                            System.out.println("user could not be banned");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                case "$unban" -> {
+//                    if (isAdmin) {
+//                        if (unban(clientHandler))
+//                            System.out.println("user unbanned");
+//                        else
+//                            System.out.println("user could not be unbanned");
+//                        continueLoop = false;
+//                    }else{
+//                        System.out.println("you are not an admin");
+//                    }
+//                }
+//                default -> {
+//                    System.out.println("invalid choice, try again: ");
+//                    choice = scanner.nextLine();
+//                }
+//            }
+//        }
+//
+//        logout();
+//        workingServer = null;
+//        login(clientHandler);
+//    }
 
     private static Channel channelChosen(ClientHandler clientHandler){
         Channel chosenChannel = null;

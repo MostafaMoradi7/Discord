@@ -23,22 +23,10 @@ public class RegisterController {
     private String email1;
     private String phone_Number1;
     private ClientHandler clientHandler;
-    private String usernameLogin1;
-    private String passwordLogin1;
     @FXML
     private TextField username;
     @FXML
     private TextField password;
-    @FXML
-    private Label username_error_Login;
-    @FXML
-    private Label password_error_Login;
-    @FXML
-    private Button login;
-    @FXML
-    private TextField usernameLogin;
-    @FXML
-    private TextField passwordLogin;
     @FXML
     private TextField email;
     @FXML
@@ -53,12 +41,11 @@ public class RegisterController {
     private Label phone_Number_error;
     @FXML
     private Button backToLogin;
-    @FXML
-    private Button backToRegister;
 
 
 
-    public void register() {
+
+    public void register(ActionEvent event)throws IOException {
         //username should be at least 6 characters and only contain letters and numbers
         boolean userNameIsValid = (username.getText().length() > 5) && (!username.getText().contains(" "));
         //password should be at least 6 characters and only contain letters and numbers
@@ -75,6 +62,12 @@ public class RegisterController {
             clientHandler = new ClientHandler();
             clientHandler.sendAndReceive(new PortableData("registration",new Client(username1, password1, email1, phone_Number1,Status.ONLINE)));
             clientHandler.run();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("entrance.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
         } else {
             if (!userNameIsValid){
                 username_error.setText("username is invalid");
@@ -89,37 +82,6 @@ public class RegisterController {
                 phone_Number_error.setText("phone number is invalid");
             }
         }
-    }
-    public void login() {
-        boolean userNameIsValid = (username.getText().length() > 5) && (!username.getText().contains(" "));
-        boolean passwordIsValid = (password.getText().length() > 5) && Pattern.matches("[a-zA-Z0-9]+", password.getText());
-
-        if (userNameIsValid && passwordIsValid) {
-            ClientHandler clientHandler = new ClientHandler();
-            PortableData response = clientHandler.sendAndReceive(new PortableData("login", new Client(username.getText(), password.getText(), null, null, Status.ONLINE)));
-            if(response.getOrder().equals("200")){
-                System.out.println("login success");
-            }
-            else{
-                System.out.println("login failed");
-            }
-
-        } else {
-            if (!userNameIsValid) {
-                username_error.setText("username is invalid");
-            }
-            if (!passwordIsValid) {
-                password_error.setText("password is invalid");
-            }
-        }
-    }
-    public void setBackToRegister(ActionEvent event)throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("register.fxml"));
-        Parent root = fxmlLoader.load();
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
     }
     public void setBackToLogin(ActionEvent event)throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Login.fxml"));

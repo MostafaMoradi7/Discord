@@ -10,26 +10,25 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="536.0" prefWidth="732.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.clientfront.RegisterController">
    <children>
-      <TextField fx:id="username" alignment="CENTER" layoutX="451.0" layoutY="94.0" prefHeight="25.0" prefWidth="179.0" promptText="username" />
-      <TextField fx:id="password" alignment="CENTER" layoutX="451.0" layoutY="144.0" prefHeight="25.0" prefWidth="179.0" promptText="password" />
-      <Button layoutX="528.0" layoutY="443.0" mnemonicParsing="false" onAction="#register" prefHeight="33.0" prefWidth="55.0" text="submit" textFill="#0e61d4" />
-      <Button layoutX="528.0" layoutY="485.0" mnemonicParsing="false" onAction="#setBackToLogin" prefHeight="34.0" prefWidth="55.0" text="log in" textFill="#0e61d4" />
+      <TextField fx:id="username" alignment="CENTER" layoutX="451.0" layoutY="94.0" prefHeight="25.0" prefWidth="179.0" promptText="username" style="-fx-background-radius: 100;" />
+      <TextField fx:id="password" alignment="CENTER" layoutX="451.0" layoutY="144.0" prefHeight="25.0" prefWidth="179.0" promptText="password" style="-fx-background-radius: 200;" />
+      <Button layoutX="513.0" layoutY="293.0" mnemonicParsing="false" onAction="#register" prefHeight="33.0" prefWidth="55.0" style="-fx-background-radius: 200; -fx-border-color: blue; -fx-border-radius: 200;" text="submit" textFill="#0e61d4" />
       <ImageView fitHeight="400.0" fitWidth="650.0" layoutX="-146.0" layoutY="29.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
          <image>
             <Image url="@photo_2022-07-04_11-56-57.jpg" />
          </image></ImageView>
-      <Label alignment="CENTER" layoutX="29.0" layoutY="-54.0" prefHeight="400.0" prefWidth="300.0" text="welcome to discord" textFill="WHITE">
+      <Label alignment="CENTER" layoutX="29.0" layoutY="-54.0" prefHeight="400.0" prefWidth="300.0" text="welcome to discord  " textFill="WHITE">
          <font>
             <Font size="31.0" />
          </font>
       </Label>
-      <Label alignment="CENTER" layoutX="449.0" layoutY="14.0" prefHeight="80.0" prefWidth="186.0" text="register" textFill="#0e61d4">
+      <Label alignment="CENTER" layoutX="449.0" layoutY="14.0" prefHeight="80.0" prefWidth="186.0" style="-fx-shape: circle;" text="register" textFill="#0e61d4">
          <font>
             <Font size="19.0" />
          </font>
       </Label>
-      <TextField fx:id="phone_Number" alignment="CENTER" layoutX="452.0" layoutY="192.0" prefHeight="25.0" prefWidth="179.0" promptText="phone number" />
-      <TextField fx:id="email" alignment="CENTER" layoutX="452.0" layoutY="242.0" prefHeight="25.0" prefWidth="179.0" promptText="email" />
+      <TextField fx:id="phone_Number" alignment="CENTER" layoutX="452.0" layoutY="192.0" prefHeight="25.0" prefWidth="179.0" promptText="phone number" style="-fx-background-radius: 200;" />
+      <TextField fx:id="email" alignment="CENTER" layoutX="452.0" layoutY="242.0" prefHeight="25.0" prefWidth="179.0" promptText="email" style="-fx-background-radius: 200;" />
       <Label fx:id="username_error" alignment="CENTER" layoutX="451.0" layoutY="119.0" prefHeight="25.0" prefWidth="179.0" textFill="RED">
          <font>
             <Font size="14.0" />
@@ -50,5 +49,11 @@
             <Font size="14.0" />
          </font>
       </Label>
+      <Label alignment="CENTER" layoutX="455.0" layoutY="338.0" prefHeight="18.0" prefWidth="173.0" text="already a user ?" textFill="#0e61d4">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+      <Button fx:id="backToLogin" layoutX="514.0" layoutY="367.0" mnemonicParsing="false" onAction="#setBackToLogin" prefHeight="33.0" prefWidth="55.0" style="-fx-background-radius: 200; -fx-border-color: blue; -fx-border-radius: 200;" text="login" textFill="#0e61d4" />
    </children>
 </AnchorPane>
