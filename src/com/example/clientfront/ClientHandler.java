@@ -70,6 +70,10 @@ public class ClientHandler extends Thread {
                     ServerDiscord serverDiscord = (ServerDiscord) portableData.getObject();
                     PortableData sendResponse = ServerQueries.allInformationServer(serverDiscord);
                     objectOutputStream.writeObject(sendResponse);
+                }else if(Objects.equals(portableData.getOrder(), "chosen chat")) {
+                    PrivateChat privateChat = (PrivateChat) portableData.getObject();
+                    PortableData sendResponse = PrivateChatQueries.findPrivateChatMessage(privateChat);
+                    objectOutputStream.writeObject(sendResponse);
                 }
             }
         } catch (Exception e) {

@@ -167,7 +167,8 @@ public class PrivateChatQueries {
                         , rst.getString("created_At"), rst.getString("body"),null);
                 messages.add(privateChatMessage);
             }
-            return new PortableData("privateChatMessage", messages);
+            privateChat.setMessages(messages);
+            return new PortableData("privateChatMessage", privateChat);
         } catch (SQLException e) {
             e.printStackTrace();
         }

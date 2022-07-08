@@ -44,5 +44,17 @@ public class PrivateChat implements Serializable {
                 ", messages=" + messages +
                 '}';
     }
+
+    public void setClientONE(Client clientONE) {
+        this.clientONE = clientONE;
+    }
+
+    public void setClientTWO(Client clientTWO) {
+        this.clientTWO = clientTWO;
+    }
+
+    public void setMessages(ArrayList<PrivateChatMessage> messages) {
+        this.messages = messages;
+    }
 }
 
