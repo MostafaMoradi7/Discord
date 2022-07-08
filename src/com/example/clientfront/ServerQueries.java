@@ -121,14 +121,29 @@ public class ServerQueries {
                 pstmt.setString(3, serverDiscord.getCreated_At());
                 pstmt.executeUpdate();
                 findIdForServer(serverDiscord);
+                insertCreatorForServer(serverDiscord);
             return new PortableData("200",serverDiscord);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return new PortableData("400", null);
     }
+    public static PortableData  insertCreatorForServer(ServerDiscord serverDiscord) {
+        String sql = "INSERT INTO serverMembers(client,server_id,created_At) VALUES(?,?,?)";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, serverDiscord.getCreator().getClientID());
+                pstmt.setInt(2, serverDiscord.getServerID());
+                pstmt.setString(3, serverDiscord.getCreated_At());
+                pstmt.executeUpdate();
+            return new PortableData("200",null);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return new PortableData("400", null);
+    }
     public static PortableData  insertNewMemberForServer(ServerDiscord serverDiscord) {
-        String sql = "INSERT INTO servers(client,server_id,created_At) VALUES(?,?,?)";
+        String sql = "INSERT INTO serverMembers(client,server_id,created_At) VALUES(?,?,?)";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             for ( Client s : serverDiscord.getMembers()) {

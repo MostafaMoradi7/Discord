@@ -62,6 +62,10 @@ public class ClientHandler extends Thread {
                     ServerDiscord serverDiscord = (ServerDiscord) portableData.getObject();
                     PortableData sendResponse = ServerQueries.insertNewMemberForServer(serverDiscord);
                     objectOutputStream.writeObject(sendResponse);
+                }else if(Objects.equals(portableData.getOrder(), "all servers")){
+                    Client client = (Client) portableData.getObject();
+                    PortableData sendResponse = ServerQueries.findServerClient(client);
+                    objectOutputStream.writeObject(sendResponse);
                 }
             }
         } catch (Exception e) {
