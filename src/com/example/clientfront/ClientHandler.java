@@ -58,6 +58,10 @@ public class ClientHandler extends Thread {
                     Group group = (Group) portableData.getObject();
                     PortableData sendResponse = GroupQueries.newGroup(group);
                     objectOutputStream.writeObject(sendResponse);
+                }else if(Objects.equals(portableData.getOrder(), "new member")){
+                    ServerDiscord serverDiscord = (ServerDiscord) portableData.getObject();
+                    PortableData sendResponse = ServerQueries.insertNewMemberForServer(serverDiscord);
+                    objectOutputStream.writeObject(sendResponse);
                 }
             }
         } catch (Exception e) {
