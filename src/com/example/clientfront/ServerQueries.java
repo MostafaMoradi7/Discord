@@ -105,10 +105,10 @@ public class ServerQueries {
         return new PortableData("something is wrong",null);
     }
     //test done
-    public static PortableData allInformationServer(int id){
-        ServerDiscord serverDiscord = findServerWithID(id);
+    public static PortableData allInformationServer(ServerDiscord serverDiscord){
         if (serverDiscord != null) {
-            serverDiscord.setGroups(GroupQueries.findGroupForServer(id));
+            serverDiscord.setGroups(GroupQueries.findGroupForServer(serverDiscord.getServerID()));
+            serverDiscord.setMembers(findClientForServer(serverDiscord.getServerID()));
         }
         return new PortableData("200",serverDiscord);
     }
@@ -169,6 +169,22 @@ public class ServerQueries {
             return serverDiscord;
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    public static HashSet<Client> findClientForServer(int server_id){
+        HashSet<Client> clients = new HashSet<>();
+        String sql = "SELECT * FROM serverMembers WHERE server_id = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, server_id);
+            ResultSet rst = pstmt.executeQuery();
+            while (rst.next()) {
+                clients.add(UserQueries.findUserWithId(rst.getInt("client")));
+            }
+            return clients;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
