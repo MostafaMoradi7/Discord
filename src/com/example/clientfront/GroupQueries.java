@@ -2,6 +2,7 @@ package com.example.clientfront;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class GroupQueries {
     //test done
@@ -21,7 +22,7 @@ public class GroupQueries {
 
                     " creator INTEGER NOT NULL," +
 
-                    "pinnedMessage TEXT NOT NULL," +
+                    "pinnedMessage TEXT," +
 
                     " created_At TEXT NOT NULL) ";
 
@@ -156,11 +157,24 @@ public class GroupQueries {
             pstmt.setInt(3,group.getServerID());
             pstmt.setString(4,group.getCreated_At());
             pstmt.executeUpdate();
-            return new PortableData("200", null);
+            return new PortableData("200", findIdForGroup(group));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return new PortableData("400", null);
+    }
+    public static Group findIdForGroup(Group group) {
+        String sql2 = "SELECT * FROM groups WHERE name = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql2)) {
+            pstmt.setString(1, group.getName());
+            ResultSet rst = pstmt.executeQuery();
+            group.setGroupID(rst.getInt("id"));
+            return group;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
     // test done
     public static PortableData  insertNewGroupMessage(GroupMessage groupMessage) {
@@ -214,8 +228,8 @@ public class GroupQueries {
         }
         return new PortableData("400", null);
     }
-    public static ArrayList<Group> findGroupForServer(int server_id){
-        ArrayList<Group> groups = new ArrayList<>();
+    public static HashSet<Group> findGroupForServer(int server_id){
+        HashSet<Group> groups = new HashSet<>();
         String sql = "SELECT * FROM groups WHERE server_id = ?;";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -1,8 +1,10 @@
 package com.example.clientfront;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Group {
+public class Group implements Serializable {
+    private static final long serialVersionUID = 7L;
     private Integer groupID;
     private int serverID;
     private String name;
@@ -66,5 +68,9 @@ public class Group {
     }
     public void addAdmin(Client client) {
         admins.add(client);
+    }
+
+    public void setGroupID(Integer groupID) {
+        this.groupID = groupID;
     }
 }

@@ -50,6 +50,14 @@ public class ClientHandler extends Thread {
                     PrivateChat privateChat = (PrivateChat) portableData.getObject();
                     PortableData sendResponse = PrivateChatQueries.newPrivateChat(privateChat);
                     objectOutputStream.writeObject(sendResponse);
+                }else if(Objects.equals(portableData.getOrder(), "new server")){
+                    ServerDiscord serverDiscord = (ServerDiscord) portableData.getObject();
+                    PortableData sendResponse = ServerQueries.insertNewServer(serverDiscord);
+                    objectOutputStream.writeObject(sendResponse);
+                }else if(Objects.equals(portableData.getOrder(), "new group")){
+                    Group group = (Group) portableData.getObject();
+                    PortableData sendResponse = GroupQueries.newGroup(group);
+                    objectOutputStream.writeObject(sendResponse);
                 }
             }
         } catch (Exception e) {

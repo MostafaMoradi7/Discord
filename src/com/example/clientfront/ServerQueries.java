@@ -2,6 +2,7 @@ package com.example.clientfront;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class ServerQueries {
 
@@ -79,8 +80,8 @@ public class ServerQueries {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             ResultSet rst = pstmt.executeQuery();
-            return new ServerDiscord(id, rst.getString("name"), null, null,
-                    null, UserQueries.findUserWithId(rst.getInt("creator")), rst.getString("created_At"));
+            return new ServerDiscord(rst.getInt("id"),rst.getString("name"),
+                    UserQueries.findUserWithId(rst.getInt("creator")),rst.getString("created_At"));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -110,5 +111,50 @@ public class ServerQueries {
             serverDiscord.setGroups(GroupQueries.findGroupForServer(id));
         }
         return new PortableData("200",serverDiscord);
+    }
+    public static PortableData  insertNewServer(ServerDiscord serverDiscord) {
+        String sql = "INSERT INTO servers(name,creator,created_At) VALUES(?,?,?)";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, serverDiscord.getName());
+                pstmt.setInt(2, serverDiscord.getCreator().getClientID());
+                pstmt.setString(3, serverDiscord.getCreated_At());
+                pstmt.executeUpdate();
+                findIdForServer(serverDiscord);
+            return new PortableData("200",serverDiscord);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return new PortableData("400", null);
+    }
+    public static PortableData  insertNewMemberForServer(ServerDiscord serverDiscord) {
+        String sql = "INSERT INTO servers(client,server_id,created_At) VALUES(?,?,?)";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for ( Client s : serverDiscord.getMembers()) {
+                pstmt.setInt(1, s.getClientID());
+                pstmt.setInt(2, serverDiscord.getServerID());
+                pstmt.setString(3, serverDiscord.getCreated_At());
+                pstmt.executeUpdate();
+            }
+            return new PortableData("200",null);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return new PortableData("400", null);
+    }
+    public static ServerDiscord findIdForServer(ServerDiscord serverDiscord) {
+        String sql2 = "SELECT * FROM servers WHERE name = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql2)) {
+            pstmt.setString(1, serverDiscord.getName());
+            ResultSet rst = pstmt.executeQuery();
+            serverDiscord.setServerID(rst.getInt("id"));
+            System.out.println(serverDiscord);
+            return serverDiscord;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
 }

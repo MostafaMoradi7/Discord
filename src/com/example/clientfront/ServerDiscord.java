@@ -1,22 +1,22 @@
 package com.example.clientfront;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 
-public class ServerDiscord {
+public class ServerDiscord implements Serializable {
+    private static final long serialVersionUID = 5L;
     private Integer serverID;
     private String name;
-    private ArrayList<Client> members;
-    private ArrayList<Group> groups;
-    private ArrayList<Channel> channels;
+    private HashSet<Client> members;
+    private HashSet<Group> groups;
+    private HashSet<Client> bannedClient;
     private Client creator;
     private String created_At;
 
-    public ServerDiscord(int serverID, String name, ArrayList<Client> members, ArrayList<Group> groups, ArrayList<Channel> channels, Client creator, String created_At) {
+    public ServerDiscord(Integer serverID, String name, Client creator, String created_At) {
         this.serverID = serverID;
         this.name = name;
-        this.members = members;
-        this.groups = groups;
-        this.channels = channels;
         this.creator = creator;
         this.created_At = created_At;
     }
@@ -25,52 +25,52 @@ public class ServerDiscord {
         return serverID;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public ArrayList<Client> getMembers() {
-        return members;
-    }
-
-    public ArrayList<Group> getGroups() {
-        return groups;
-    }
-
-    public ArrayList<Channel> getChannels() {
-        return channels;
-    }
-
-    public Client getCreator() {
-        return creator;
-    }
-
-    public String getCreated_At() {
-        return created_At;
-    }
-
     public void setServerID(Integer serverID) {
         this.serverID = serverID;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setMembers(ArrayList<Client> members) {
+    public HashSet<Client> getMembers() {
+        return members;
+    }
+
+    public void setMembers(HashSet<Client> members) {
         this.members = members;
     }
 
-    public void setGroups(ArrayList<Group> groups) {
+    public HashSet<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(HashSet<Group> groups) {
         this.groups = groups;
     }
 
-    public void setChannels(ArrayList<Channel> channels) {
-        this.channels = channels;
+    public HashSet<Client> getBannedClient() {
+        return bannedClient;
+    }
+
+    public void setBannedClient(HashSet<Client> bannedClient) {
+        this.bannedClient = bannedClient;
+    }
+
+    public Client getCreator() {
+        return creator;
     }
 
     public void setCreator(Client creator) {
         this.creator = creator;
+    }
+
+    public String getCreated_At() {
+        return created_At;
     }
 
     public void setCreated_At(String created_At) {
@@ -79,12 +79,12 @@ public class ServerDiscord {
 
     @Override
     public String toString() {
-        return "com.example.clientfront.ServerDiscord{" +
+        return "ServerDiscord{" +
                 "serverID=" + serverID +
                 ", name='" + name + '\'' +
                 ", members=" + members +
                 ", groups=" + groups +
-                ", channels=" + channels +
+                ", bannedClient=" + bannedClient +
                 ", creator=" + creator +
                 ", created_At='" + created_At + '\'' +
                 '}';
