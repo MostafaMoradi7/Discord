@@ -171,6 +171,7 @@ public class PrivateChatQueries {
                 messages.add(privateChatMessage);
             }
             privateChat.setMessages(messages);
+          //  System.out.println(messages);
             return new PortableData("privateChatMessage", privateChat);
         } catch (SQLException e) {
             e.printStackTrace();
