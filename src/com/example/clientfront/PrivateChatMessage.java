@@ -11,6 +11,7 @@ public class PrivateChatMessage implements Serializable {
     private String dateTime;
     private String message;
     private TypeMVF type;
+    private byte[] buffer;
 
     public PrivateChatMessage(int chatId, Client sender, Client receiver, String dateTime, String message,TypeMVF type) {
         this.chatId = chatId;
@@ -19,6 +20,10 @@ public class PrivateChatMessage implements Serializable {
         this.dateTime = dateTime;
         this.message = message;
         this.type=type;
+    }
+
+    public byte[] getBuffer() {
+        return buffer;
     }
 
     public int getMessageID() {
@@ -60,5 +65,37 @@ public class PrivateChatMessage implements Serializable {
                 ", message='" + message + '\'' +
                 ", type=" + type +
                 '}';
+    }
+
+    public void setMessageID(int messageID) {
+        this.messageID = messageID;
+    }
+
+    public void setChatId(int chatId) {
+        this.chatId = chatId;
+    }
+
+    public void setSender(Client sender) {
+        this.sender = sender;
+    }
+
+    public void setReceiver(Client receiver) {
+        this.receiver = receiver;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setType(TypeMVF type) {
+        this.type = type;
+    }
+
+    public void setBuffer(byte[] buffer) {
+        this.buffer = buffer;
     }
 }

@@ -57,6 +57,8 @@ public class PrivateChatQueries {
 
                     " body TEXT NOT NULL ," +
 
+                    " type TEXT NOT NULL ," +
+
                     " created_At TEXT NOT NULL) ";
 
             stmt.executeUpdate(sql);
@@ -137,7 +139,7 @@ public class PrivateChatQueries {
 
     //test done
     public static int insertNewMessagePrivateChat(PrivateChatMessage privateChatMessage) {
-        String sql = "INSERT INTO privateChatMessages(chatId,sender,receiver,body,created_At) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO privateChatMessages(chatId,sender,receiver,body,created_At,type) VALUES(?,?,?,?,?,?)";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, privateChatMessage.getChatId());
@@ -145,6 +147,7 @@ public class PrivateChatQueries {
             pstmt.setInt(3, privateChatMessage.getReceiver().getClientID());
             pstmt.setString(4, privateChatMessage.getMessage());
             pstmt.setString(5, privateChatMessage.getDateTime());
+            pstmt.setString(6, privateChatMessage.getType().toString());
             pstmt.executeUpdate();
             return 1;
         } catch (SQLException e) {
@@ -164,7 +167,7 @@ public class PrivateChatQueries {
             while (rst.next()) {
                 PrivateChatMessage privateChatMessage = new PrivateChatMessage( privateChat.getChatID(),
                         UserQueries.findUserWithId(rst.getInt("sender")), UserQueries.findUserWithId(rst.getInt("receiver"))
-                        , rst.getString("created_At"), rst.getString("body"),null);
+                        , rst.getString("created_At"), rst.getString("body"),TypeMVF.valueOf(rst.getString("type")));
                 messages.add(privateChatMessage);
             }
             privateChat.setMessages(messages);

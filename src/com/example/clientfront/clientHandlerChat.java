@@ -1,8 +1,6 @@
 package com.example.clientfront;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
 
@@ -35,6 +33,14 @@ public class clientHandlerChat extends Thread {
                     PrivateChatMessage privateChatMessage = (PrivateChatMessage) portableData.getObject();
                     PrivateChatQueries.insertNewMessagePrivateChat(privateChatMessage);
                     sendMessagePrivateChat(privateChatMessage);
+                }else if (Objects.equals(portableData.getOrder(), "send private file")) {
+                    PrivateChatMessage privateChatMessage = (PrivateChatMessage) portableData.getObject();
+                    FileOutputStream fileOutputStream = new FileOutputStream(privateChatMessage.getMessage());
+                    fileOutputStream.write(privateChatMessage.getBuffer());
+                    String name = privateChatMessage.getMessage();
+                    privateChatMessage.setMessage("C:\\Users\\Mojtaba\\Desktop\\discord project\\" + name );
+                    PrivateChatQueries.insertNewMessagePrivateChat(privateChatMessage);
+                    sendMessagePrivateChat(privateChatMessage);
                 } else if (Objects.equals(portableData.getOrder(), "groupChatMessage")) {
 
                 }
@@ -50,8 +56,18 @@ public class clientHandlerChat extends Thread {
         if (clientHandlerChat == null) {
         } else {
             try {
-                clientHandlerChat.objectOutputStream.writeObject(new PortableData("new private message", privateChatMessage));
-                System.out.println("finish");
+                if (Objects.equals(privateChatMessage.getType().toString(), "FILE")){
+                    byte[] buffer;
+                    FileInputStream fileInputStream = new FileInputStream(privateChatMessage.getMessage());
+                    File file = new File(privateChatMessage.getMessage());
+                    buffer = fileInputStream.readAllBytes();
+                    privateChatMessage.setBuffer(buffer);
+                    privateChatMessage.setMessage(file.getName());
+                    clientHandlerChat.objectOutputStream.writeObject(new PortableData("new private message", privateChatMessage));
+                }else{
+                    clientHandlerChat.objectOutputStream.writeObject(new PortableData("new private message", privateChatMessage));
+                    System.out.println("finish");
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
