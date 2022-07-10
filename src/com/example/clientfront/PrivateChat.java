@@ -45,4 +45,8 @@ public class PrivateChat implements Serializable {
     public ArrayList<PrivateChatMessage> getMessages() {
         return messages;
     }
+
+    public void showUnseenMessages(){
+
+    }
 }

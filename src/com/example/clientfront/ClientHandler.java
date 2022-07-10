@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-public class ClientHandler implements Runnable {
+public class ClientHandler {
 
     private Client client;
     private Socket clientSocket;
@@ -15,13 +15,10 @@ public class ClientHandler implements Runnable {
     private ClientInputHandler inputHandler;
     private PortableData portableData;
 
-    private ArrayList<PrivateChatMessage> pvMessages;
-    private HashMap<String, ArrayList<GroupMessage>> gapMessages;
-    private HashMap<String, ArrayList<ChannelMessage>> channelsMessages;
 
     public ClientHandler() {
         try {
-            clientSocket = new Socket("192.168.43.30", 6000);
+            clientSocket = new Socket("localhost", 6000);
             outputHandler = new ClientOutputHandler(clientSocket, client);
             inputHandler = new ClientInputHandler(clientSocket);
 
@@ -47,8 +44,7 @@ public class ClientHandler implements Runnable {
         Scanner scanner = new Scanner(System.in);
         String username, password, email, phone_Number;
         Status status;
-        System.out.println("Please Enter Required information");
-        System.out.println("fields containing * must be completed. if not enter 'null' to skip.");
+        System.out.println("Please Enter Required information; fields containing * must be completed. if not enter 'null' to skip.");
         System.out.println("*username: ");
         do {
             username = scanner.nextLine();
@@ -103,7 +99,6 @@ public class ClientHandler implements Runnable {
         PortableData portableData = new PortableData("registration", client);
         PortableData response = sendAndReceive(portableData);
         if (response.getOrder().equals("200")) {
-            System.out.println("nfdsfdsfs");
             return this.client = (Client) response.getObject();
         }
         else
@@ -118,8 +113,7 @@ public class ClientHandler implements Runnable {
     public Client loginClient() {
         Scanner scanner = new Scanner(System.in);
         String username, password;
-        System.out.println("Please Enter Required information");
-        System.out.println("fields containing * must be completed. if not enter 'null' to skip.");
+        System.out.println("Please Enter Required information; fields containing * must be completed. if not enter 'null' to skip.");
         System.out.println("*username: ");
         do {
             username = scanner.nextLine();
@@ -152,7 +146,6 @@ public class ClientHandler implements Runnable {
         }else{
             System.out.println("login successful");
             this.client = (Client) response.getObject();
-            System.out.println("your client id is: " + this.client.getClientID());
             return this.client;
 
         }
@@ -186,50 +179,22 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    public void createServer(){
-
-    }
-
-    @Override
-    public void run(){
-
-    }
-
-    public void receivePVMessage(PortableData newMessage){
-        PrivateChatMessage pvMessage = (PrivateChatMessage) newMessage.getObject();
-        pvMessages.add(pvMessage);
-    }
-
-    public void receiveChannelMessage(PortableData newMessage){
-        ChannelMessage channelMessage = (ChannelMessage) newMessage.getObject();
-        channelsMessages.get(channelMessage.getChannelName()).add(channelMessage);
-    }
-
-    public void receiveGapMessage(PortableData newMessage){
-        GroupMessage groupMessage = (GroupMessage) newMessage.getObject();
-        gapMessages.get(groupMessage);
-    }
 
     public Client returnMainClient(){
         return this.client;
     }
 
-    public void receiveAMessage(PortableData newMessage){
-        this.portableData = newMessage;
-    }
 
     public PortableData sendAndReceive(PortableData portableData){
         outputHandler.setPortableData(portableData);
-//        Thread outThread = new Thread(outputHandler);
-//        outThread.start();
-        Thread inThread = new Thread(inputHandler);
-        PortableData response;
-        outputHandler.run();
-        inputHandler.run();
         System.out.println("waiting for server response...");
-        while ((response = inputHandler.getPortableData()) == null){
-            // wait till respond is sent
-        }
+        PortableData response;
+        outputHandler.connect();
+        inputHandler.connect();
+
+        response = inputHandler.getPortableData();
         return response;
     }
+
+
 }

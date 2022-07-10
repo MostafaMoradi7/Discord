@@ -21,7 +21,7 @@ public class Client implements Serializable {
     // TODO: HANDLE A PHOTO
     private String created_At;
 
-    private HashSet<Server> servers;
+    private HashSet<ServerDiscord> servers;
 
     //  CLIENT HAS A LIST OF FRIENDS:
     private HashSet<Client> friends;
@@ -37,6 +37,7 @@ public class Client implements Serializable {
         this.email = email;
         this.phone_Number = phone_Number;
         this.status = status;
+        this.servers = new HashSet<>();
         created_At = LocalDateTime.now().toString();
     }
 
@@ -44,11 +45,9 @@ public class Client implements Serializable {
         return username;
     }
 
-    public void addServer(Server server) {
-        servers.add(server);
-    }
 
-    public void removeServer(Server server) {
+
+    public void removeServer(ServerDiscord server) {
         servers.remove(server);
     }
 
@@ -64,12 +63,12 @@ public class Client implements Serializable {
         this.clientID = id;
     }
 
-    public Server getDesiredServer(String serverName){
-        for (Server server : servers) {
-            if (server.getServerName().equals(serverName)) {
-                return server;
-            }
-        }
-        return null;
-    }
+//    public ServerDiscord getDesiredServer(String serverName){
+//        for (ServerDiscord server : servers) {
+//            if (server.getServerName().equals(serverName)) {
+//                return server;
+//            }
+//        }
+//        return null;
+//    }
 }

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
 
-public class ClientInputHandler implements Runnable{
+public class ClientInputHandler{
     private Socket clientSocket;
     private ObjectInputStream reader;
     private PortableData portableData;
@@ -17,11 +17,16 @@ public class ClientInputHandler implements Runnable{
             e.printStackTrace();
         }
     }
-    @Override
-    public void run() {
+    public void connect(){
         try {
-            System.out.println("waiting to receive data...(input handler)");
             portableData = (PortableData) reader.readObject();
+            if (portableData.getObject() instanceof ServerDiscord)
+                System.out.println(portableData.getObject());
+            else if (portableData.getObject() instanceof PrivateChatMessage pvm)
+                System.out.println(pvm);
+            else if (portableData.getObject() instanceof GroupMessage gm)
+                System.out.println(gm);
+            else
             System.out.println(portableData.getOrder() + ": " + portableData.getObject());
 
 
@@ -47,5 +52,6 @@ public class ClientInputHandler implements Runnable{
         PortableData tmpData = portableData;
         portableData = null;
         return tmpData;
+
     }
 }

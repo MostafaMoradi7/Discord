@@ -1,8 +1,6 @@
 package com.example.clientfront;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +23,7 @@ public class ClientHandlerChat implements Runnable {
 
     public ClientHandlerChat() {
         try {
-            clientSocket = new Socket("192.168.43.30", 6001);
+            clientSocket = new Socket("localhost", 6001);
             writer = new ObjectOutputStream(clientSocket.getOutputStream());
             reader = new ObjectInputStream(clientSocket.getInputStream());
 
@@ -49,8 +47,30 @@ public class ClientHandlerChat implements Runnable {
             PortableData newMessage;
             try {
                 if ((newMessage = (PortableData) reader.readObject()) != null){
-                    if (newMessage.getOrder().equals("new private message"))
-                    System.out.println(newMessage.getObject());
+                    if (newMessage.getOrder().equals("new private message")) {
+                        PrivateChatMessage message = (PrivateChatMessage) newMessage.getObject();
+                        if(message.getType().name().equals("TEXT")){
+                            System.out.println(message.getSender().getUsername() + ": " + message.getMessage());
+                        }else {
+                            System.out.println(message.getSender() + ": " + message.getMessage());
+                            System.out.println("do you want to download this file? (y/n)");
+                            Scanner scanner = new Scanner(System.in);
+                            String answer = scanner.nextLine();
+                            if(answer.equals("y")){
+                                System.out.println("downloading file...");
+                                File file = new File("C:\\Users\\User\\Desktop\\" + message.getMessage());
+                                FileOutputStream fos = new FileOutputStream(file);
+                                fos.write(message.getBuffer());
+                                fos.close();
+                                System.out.println("file downloaded");
+                            }else if (answer.equals("n")) {
+                                System.out.println("file not downloaded");
+                            }else {
+                                System.out.println("invalid answer, file not downloaded");
+                            }
+
+                        }
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -66,9 +86,15 @@ public class ClientHandlerChat implements Runnable {
             e.printStackTrace();
         }
     }
-
     public Client returnMainClient() {
         return this.client;
+    }
+
+    public void sentFile(String path) throws IOException {
+        byte[] buffer = new byte[Integer.MAX_VALUE];
+        FileInputStream file = new FileInputStream(path);
+        buffer = file.readAllBytes();
+        PortableData portableData = new PortableData("file", buffer);
     }
 
 }

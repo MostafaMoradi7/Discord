@@ -12,6 +12,7 @@ public class PrivateChatMessage implements Serializable {
     private String dateTime;
     private String message;
     private TypeMVF type;
+    private byte[] buffer;
 
     public PrivateChatMessage(int chatId, Client sender, Client receiver, String dateTime, String message, TypeMVF type) {
         this.chatId = chatId;
@@ -20,6 +21,14 @@ public class PrivateChatMessage implements Serializable {
         this.dateTime = dateTime;
         this.message = message;
         this.type = type;
+    }
+
+    public void setBuffer(byte[] buffer) {
+        this.buffer = buffer;
+    }
+
+    public byte[] getBuffer() {
+        return buffer;
     }
 
     public void setMessage(String message) {
@@ -56,7 +65,8 @@ public class PrivateChatMessage implements Serializable {
 
     @Override
     public String toString(){
+        String time = dateTime.substring(0,18);
         return sender.getUsername() +": " + message +"\n"
-                +"\t \t" + dateTime;
+                +"\t\t\t\t\t\t" + time + "\n";
     }
 }
