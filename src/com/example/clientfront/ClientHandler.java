@@ -174,7 +174,6 @@ public class ClientHandler {
             return null;
         } else {
             System.out.println("client found");
-            this.client = (Client) receivedData.getObject();
             return (Client) receivedData.getObject();
         }
     }

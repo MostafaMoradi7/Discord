@@ -26,8 +26,12 @@ public class ClientInputHandler{
                 System.out.println(pvm);
             else if (portableData.getObject() instanceof GroupMessage gm)
                 System.out.println(gm);
-            else
-            System.out.println(portableData.getOrder() + ": " + portableData.getObject());
+            else if (portableData.getObject() instanceof PrivateChat){
+                System.out.println("recent Messages: ");
+                for (PrivateChatMessage pvm : ((PrivateChat) portableData.getObject()).getMessages())
+                    System.out.println(pvm);
+            }
+
 
 
         }catch (IOException e) {

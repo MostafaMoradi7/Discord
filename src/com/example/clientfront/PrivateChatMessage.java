@@ -65,8 +65,8 @@ public class PrivateChatMessage implements Serializable {
 
     @Override
     public String toString(){
-        String time = dateTime.substring(0,18);
+        String time = dateTime.substring(0,19);
         return sender.getUsername() +": " + message +"\n"
-                +"\t\t\t\t\t\t" + time + "\n";
+                +"\t\t\t\t\t\t" + time;
     }
 }
