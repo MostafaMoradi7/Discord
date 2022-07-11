@@ -1,11 +1,15 @@
 package com.example.clientfront;
 
+import java.util.ArrayList;
+
 public class GroupMessage {
     private Integer messageID;
     private int GroupID;
     private Client from;
     private String body;
     private String created_At;
+    private ArrayList<Client> clients;
+
 
     public GroupMessage(Integer messageID, int groupID, Client from, String body,String created_At) {
         this.messageID = messageID;
@@ -33,5 +37,9 @@ public class GroupMessage {
 
     public String getCreated_At() {
         return created_At;
+    }
+
+    public ArrayList<Client> getClients() {
+        return clients;
     }
 }

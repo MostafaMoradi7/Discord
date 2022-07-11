@@ -42,6 +42,8 @@ public class clientHandlerChat extends Thread {
                     PrivateChatQueries.insertNewMessagePrivateChat(privateChatMessage);
                     sendMessagePrivateChat(privateChatMessage);
                 } else if (Objects.equals(portableData.getOrder(), "groupChatMessage")) {
+                    GroupMessage groupMessage = (GroupMessage) portableData.getObject();
+                    GroupQueries.insertNewGroupMessage(groupMessage);
 
                 }
             }
@@ -70,6 +72,30 @@ public class clientHandlerChat extends Thread {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+    public void sendMessageGroup(GroupMessage groupMessage) {
+        for (int i=0 ; i<groupMessage.getClients().size() ; i++){
+            clientHandlerChat clientHandlerChat = ServerChat.clientSocketHashmap.get(groupMessage.getClients().get(i).getClientID());
+            if (clientHandlerChat == null) {
+            } else {
+                try {
+//                    if (Objects.equals(groupMessage.getType().toString(), "FILE")){
+//                        byte[] buffer;
+//                        FileInputStream fileInputStream = new FileInputStream(privateChatMessage.getMessage());
+//                        File file = new File(privateChatMessage.getMessage());
+//                        buffer = fileInputStream.readAllBytes();
+//                        privateChatMessage.setBuffer(buffer);
+//                        privateChatMessage.setMessage(file.getName());
+//                        clientHandlerChat.objectOutputStream.writeObject(new PortableData("new private message", privateChatMessage));}
+//                        else{
+                        clientHandlerChat.objectOutputStream.writeObject(new PortableData("new private message", groupMessage));
+                        System.out.println("done");
+//                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
