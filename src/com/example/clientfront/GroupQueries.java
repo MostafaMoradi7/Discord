@@ -210,6 +210,37 @@ public class GroupQueries {
         }
         return new PortableData("400", null);
     }
+    public static PortableData deleteMember(Group group){
+        String sql = "DELETE FROM groupMembers WHERE gruop_id = ? AND client = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (int i=0 ; i<group.getClients().size() ; i++) {
+                pstmt.setInt(1,group.getGroupID());
+                pstmt.setInt(2,group.getClients().get(i).getClientID());
+                pstmt.executeUpdate();
+            }
+            return new PortableData("200",null);
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            return new PortableData("400", null);
+        }
+    }
+
+    public static PortableData deleteAdmin(Group group){
+        String sql = "DELETE FROM groupAdmins WHERE gruop_id = ? AND client = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for (int i=0 ; i<group.getAdmins().size() ; i++) {
+                pstmt.setInt(1,group.getGroupID());
+                pstmt.setInt(2,group.getAdmins().get(i).getClientID());
+                pstmt.executeUpdate();
+            }
+            return new PortableData("200",null);
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            return new PortableData("400", null);
+        }
+    }
     //test done
     public static PortableData  insertNewGroupAdmins(Group group) {
         String sql = "INSERT INTO groupAdmins(group_id,server_id,client,created_At) VALUES(?,?,?,?)";

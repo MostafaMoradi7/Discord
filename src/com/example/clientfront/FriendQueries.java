@@ -89,7 +89,7 @@ public class FriendQueries {
     }
 
     public static PortableData requestResponse(RequestFriend requestFriend) {
-        String sql = "UPDATE friends SET isAccept = ? , "
+        String sql = "UPDATE friends SET isAccept = ? "
                 + "WHERE id = ?";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -155,8 +155,24 @@ public class ServerQueries {
             return new PortableData("200",null);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+            return new PortableData("400", null);
         }
-        return new PortableData("400", null);
+    }
+    public static PortableData deleteMember(ServerDiscord serverDiscord){
+        String sql = "DELETE FROM serverMembers WHERE server_id = ? AND client = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            for ( Client s : serverDiscord.getMembers()) {
+                pstmt.setInt(1,serverDiscord.getServerID());
+                pstmt.setInt(2, s.getClientID());
+                pstmt.executeUpdate();
+            }
+            return new PortableData("200",null);
+
+        }catch (SQLException e){
+            System.out.println(e.getMessage());
+            return new PortableData("400", null);
+        }
     }
     public static ServerDiscord findIdForServer(ServerDiscord serverDiscord) {
         String sql2 = "SELECT * FROM servers WHERE name = ?;";
