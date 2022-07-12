@@ -7,7 +7,7 @@ import java.net.Socket;
 public class Server {
     public static void main(String[] args) {
         try {
-            ReactionQueries.createTable();
+           //PrivateChatQueries.createTable();
             ServerSocket serverSocket = new ServerSocket(6000);
             System.out.println("server started ...");
             while (true){

@@ -43,6 +43,7 @@ public class GroupQueries {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+
     //test done
     public static void createTableGroupMember() {
         Statement stmt = null;
@@ -77,6 +78,7 @@ public class GroupQueries {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+
     //test done
     public static void createTableGroupAdmin() {
         Statement stmt = null;
@@ -111,6 +113,7 @@ public class GroupQueries {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+
     // test done
     public static void createGroupMessageTable() {
         Statement stmt = null;
@@ -147,15 +150,16 @@ public class GroupQueries {
         System.out.println("Table Product Created Successfully!!!");
 
     }
+
     //test done
     public static PortableData newGroup(Group group) {
         String sql = "INSERT INTO groups(creator,name,server_id,created_At) VALUES(?,?,?,?)";
-        try (Connection conn =UserQueries.connect();
+        try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, group.getCreator().getClientID());
             pstmt.setString(2, group.getName());
-            pstmt.setInt(3,group.getServerID());
-            pstmt.setString(4,group.getCreated_At());
+            pstmt.setInt(3, group.getServerID());
+            pstmt.setString(4, group.getCreated_At());
             pstmt.executeUpdate();
             return new PortableData("200", findIdForGroup(group));
         } catch (SQLException e) {
@@ -163,6 +167,7 @@ public class GroupQueries {
         }
         return new PortableData("400", null);
     }
+
     public static Group findIdForGroup(Group group) {
         String sql2 = "SELECT * FROM groups WHERE name = ?;";
         try (Connection conn = UserQueries.connect();
@@ -176,8 +181,24 @@ public class GroupQueries {
         }
         return null;
     }
+
+    public static PortableData pinMessage(Group group) {
+        String sql = "UPDATE groups SET pinnedMessage = ? "
+                + "WHERE id = ?";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, group.getPinnedMessage().getBody());
+            pstmt.setInt(2, group.getGroupID());
+            pstmt.executeUpdate();
+            return new PortableData("200", null);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return new PortableData("400", null);
+    }
+
     // test done
-    public static PortableData  insertNewGroupMessage(GroupMessage groupMessage) {
+    public static PortableData insertNewGroupMessage(GroupMessage groupMessage) {
         String sql = "INSERT INTO groupMessage(group_id,sender,body,created_At) VALUES(?,?,?,?)";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -186,80 +207,83 @@ public class GroupQueries {
             pstmt.setString(3, groupMessage.getBody());
             pstmt.setString(4, groupMessage.getCreated_At());
             pstmt.executeUpdate();
-            return new PortableData("200",null);
+            return new PortableData("200", null);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return new PortableData("400", null);
     }
+
     //test done
-    public static PortableData  insertNewGroupMembers(Group group) {
-        String sql = "INSERT INTO groupMembers(group_id,server_id,client,created_At) VALUES(?,?,?,?)";
+    public static PortableData insertNewGroupMembers(Group group) {
+        String sql = "INSERT INTO groupMembers(group_id,client,created_At) VALUES(?,?,?)";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            for (int i=0 ; i<group.getClients().size() ; i++){
+            for (int i = 0; i < group.getClients().size(); i++) {
                 pstmt.setInt(1, group.getGroupID());
-                pstmt.setInt(2, group.getServerID());
-                pstmt.setInt(3, group.getClients().get(i).getClientID());
-                pstmt.setString(4, group.getCreated_At());
+                pstmt.setInt(2, group.getClients().get(i).getClientID());
+                pstmt.setString(3, group.getCreated_At());
                 pstmt.executeUpdate();
             }
-            return new PortableData("200",null);
+            return new PortableData("200", null);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return new PortableData("400", null);
     }
-    public static PortableData deleteMember(Group group){
+
+    public static PortableData deleteMember(Group group) {
         String sql = "DELETE FROM groupMembers WHERE gruop_id = ? AND client = ?;";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            for (int i=0 ; i<group.getClients().size() ; i++) {
-                pstmt.setInt(1,group.getGroupID());
-                pstmt.setInt(2,group.getClients().get(i).getClientID());
+            for (int i = 0; i < group.getClients().size(); i++) {
+                pstmt.setInt(1, group.getGroupID());
+                pstmt.setInt(2, group.getClients().get(i).getClientID());
                 pstmt.executeUpdate();
             }
-            return new PortableData("200",null);
-        }catch (SQLException e){
+            return new PortableData("200", null);
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             return new PortableData("400", null);
         }
     }
 
-    public static PortableData deleteAdmin(Group group){
+    public static PortableData deleteAdmin(Group group) {
         String sql = "DELETE FROM groupAdmins WHERE gruop_id = ? AND client = ?;";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            for (int i=0 ; i<group.getAdmins().size() ; i++) {
-                pstmt.setInt(1,group.getGroupID());
-                pstmt.setInt(2,group.getAdmins().get(i).getClientID());
+            for (int i = 0; i < group.getAdmins().size(); i++) {
+                pstmt.setInt(1, group.getGroupID());
+                pstmt.setInt(2, group.getAdmins().get(i).getClientID());
                 pstmt.executeUpdate();
             }
-            return new PortableData("200",null);
-        }catch (SQLException e){
+            return new PortableData("200", null);
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             return new PortableData("400", null);
         }
     }
+
     //test done
-    public static PortableData  insertNewGroupAdmins(Group group) {
-        String sql = "INSERT INTO groupAdmins(group_id,server_id,client,created_At) VALUES(?,?,?,?)";
+    public static PortableData insertNewGroupAdmins(Group group) {
+        String sql = "INSERT INTO groupAdmins(group_id,client,created_At) VALUES(?,?,?,?)";
         try (Connection conn = UserQueries.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            for (int i=0 ; i<group.getAdmins().size() ; i++){
+            for (int i = 0; i < group.getAdmins().size(); i++) {
                 pstmt.setInt(1, group.getGroupID());
                 pstmt.setInt(2, group.getServerID());
                 pstmt.setInt(3, group.getClients().get(i).getClientID());
                 pstmt.setString(4, group.getCreated_At());
                 pstmt.executeUpdate();
             }
-            return new PortableData("200",null);
+            return new PortableData("200", null);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
         return new PortableData("400", null);
     }
-    public static HashSet<Group> findGroupForServer(int server_id){
+
+    public static HashSet<Group> findGroupForServer(int server_id) {
         HashSet<Group> groups = new HashSet<>();
         String sql = "SELECT * FROM groups WHERE server_id = ?;";
         try (Connection conn = UserQueries.connect();
@@ -267,8 +291,8 @@ public class GroupQueries {
             pstmt.setInt(1, server_id);
             ResultSet rst = pstmt.executeQuery();
             while (rst.next()) {
-                groups.add(new Group(rst.getInt("id"),server_id,rst.getString("name"),
-                        UserQueries.findUserWithId(rst.getInt("creator")),null,rst.getString("created_At")));
+                groups.add(new Group(rst.getInt("id"), server_id, rst.getString("name"),
+                        UserQueries.findUserWithId(rst.getInt("creator")), null, rst.getString("created_At")));
             }
             return groups;
         } catch (SQLException e) {
@@ -276,4 +300,23 @@ public class GroupQueries {
         }
         return null;
     }
-}
+
+    public static PortableData fineMessage(Group group) {
+        ArrayList<GroupMessage> groupMessages = new ArrayList<>();
+        String sql = "SELECT * FROM groupMessage WHERE group_id = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, group.getGroupID());
+            ResultSet rst = pstmt.executeQuery();
+            while (rst.next()) {
+                groupMessages.add(new GroupMessage(rst.getInt("id"),rst.getInt("group_id"),
+                        UserQueries.findUserWithId(rst.getInt("sender")),rst.getString("body"),rst.getString("created_At")));
+            }
+            return new PortableData("200",groupMessages);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new PortableData("400", null);
+        }
+    }
+
+    }

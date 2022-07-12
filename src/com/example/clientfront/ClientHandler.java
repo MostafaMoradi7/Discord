@@ -75,6 +75,13 @@ public class ClientHandler extends Thread {
                     PortableData sendResponse = PrivateChatQueries.findPrivateChatMessage(privateChat);
                     objectOutputStream.writeUnshared(sendResponse);
                  //   System.out.println(((PrivateChat) sendResponse.getObject()).toString());
+                }else if(Objects.equals(portableData.getOrder(),"upload profile")){
+                    Client client = (Client) portableData.getObject();
+                    FileOutputStream fileOutputStream = new FileOutputStream(client.getUsername());
+                    fileOutputStream.write(client.getBuffer());
+                    client.setProfile("C:\\Users\\Mojtaba\\Desktop\\discord project\\" + client.getUsername());
+                    PortableData sendResponse =UserQueries.uploadProfile(client);
+                    objectOutputStream.writeUnshared(sendResponse);
                 }
             }
         } catch (Exception e) {

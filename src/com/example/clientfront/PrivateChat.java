@@ -8,14 +8,17 @@ public class PrivateChat implements Serializable {
         private int chatID;
         private Client clientONE;
         private Client clientTWO;
+        private int banned;
         private ArrayList<PrivateChatMessage> messages;
 
-        public PrivateChat(int chatID , Client clientONE, Client clientTWO) {
-            this.chatID = chatID;
-            this.clientONE = clientONE;
-            this.clientTWO = clientTWO;
-            messages = new ArrayList<>();
-        }
+    public PrivateChat(int chatID, Client clientONE, Client clientTWO, int banned) {
+        this.chatID = chatID;
+        this.clientONE = clientONE;
+        this.clientTWO = clientTWO;
+        this.banned = banned;
+        messages = new ArrayList<>();
+    }
+
     public Client getClientONE() {
         return clientONE;
     }
@@ -55,6 +58,14 @@ public class PrivateChat implements Serializable {
 
     public void setMessages(ArrayList<PrivateChatMessage> messages) {
         this.messages = messages;
+    }
+
+    public int getBanned() {
+        return banned;
+    }
+
+    public void setBanned(int banned) {
+        this.banned = banned;
     }
 }
 

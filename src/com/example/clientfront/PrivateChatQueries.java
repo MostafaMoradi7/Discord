@@ -18,7 +18,9 @@ public class PrivateChatQueries {
 
                     " client1 INTEGER NOT NULL, " +
 
-                    " client2 INTEGER NOT NULL ) ";
+                    " client2 INTEGER NOT NULL, " +
+
+                    " banned INTEGER DEFAULT 0) ";
 
             stmt.executeUpdate(sql);
 
@@ -100,7 +102,7 @@ public class PrivateChatQueries {
             pstmt.setInt(1, privateChat.getClientONE().getClientID());
             pstmt.setInt(2, privateChat.getClientTWO().getClientID());
             ResultSet rst = pstmt.executeQuery();
-            return new PrivateChat(rst.getInt("id"),privateChat.getClientONE(),privateChat.getClientTWO());
+            return new PrivateChat(rst.getInt("id"),privateChat.getClientONE(),privateChat.getClientTWO(),rst.getInt("banned"));
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -116,7 +118,7 @@ public class PrivateChatQueries {
             pstmt.setInt(1, client.getClientID());
             ResultSet rst = pstmt.executeQuery();
             while (rst.next()) {
-                PrivateChat privateChat = new PrivateChat(rst.getInt("id"), client, UserQueries.findUserWithId(rst.getInt("client2")));
+                PrivateChat privateChat = new PrivateChat(rst.getInt("id"), client, UserQueries.findUserWithId(rst.getInt("client2")),rst.getInt("banned"));
                 privateChats.add(privateChat);
             }
         } catch (SQLException e) {
@@ -128,7 +130,7 @@ public class PrivateChatQueries {
             pstmt.setInt(1, client.getClientID());
             ResultSet rst = pstmt.executeQuery();
             while (rst.next()) {
-                PrivateChat privateChat = new PrivateChat(rst.getInt("id"), client, UserQueries.findUserWithId(rst.getInt("client1")));
+                PrivateChat privateChat = new PrivateChat(rst.getInt("id"), client, UserQueries.findUserWithId(rst.getInt("client1")),rst.getInt("banned"));
                 privateChats.add(privateChat);
             }
         } catch (SQLException e) {
@@ -177,5 +179,19 @@ public class PrivateChatQueries {
             e.printStackTrace();
         }
         return new PortableData("something is wrong", null);
+    }
+    public static PortableData bannedPrivateChat(PrivateChat privateChat){
+            String sql = "UPDATE private_chats SET banned = ? "
+                    + "WHERE id = ?;";
+            try (Connection conn = UserQueries.connect();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, privateChat.getBanned());
+                pstmt.setInt(2, privateChat.getChatID());
+                pstmt.executeUpdate();
+                return new PortableData("200", null);
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+            return new PortableData("400", null);
     }
 }

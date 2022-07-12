@@ -14,6 +14,9 @@ public class Client implements Serializable{
     private String username;
     private String password;
     private String email;
+    private String profile;
+    private byte[] buffer;
+
 
     private String phone_Number;
     private Status status;
@@ -36,6 +39,14 @@ public class Client implements Serializable{
         this.phone_Number = phone_Number;
         this.status = status;
         created_At = LocalDateTime.now().toString();
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public String getUsername() {
@@ -74,6 +85,14 @@ public class Client implements Serializable{
         return token;
     }
 
+    public byte[] getBuffer() {
+        return buffer;
+    }
+
+    public void setBuffer(byte[] buffer) {
+        this.buffer = buffer;
+    }
+
     @Override
     public String toString() {
         return "com.example.clientfront.Client{" +
@@ -105,4 +124,5 @@ public class Client implements Serializable{
     public void setClientID(int clientID) {
         this.clientID = clientID;
     }
+
 }

@@ -153,5 +153,33 @@ public class UserQueries {
         }
         return new PortableData("400",null);
     }
+    public static PortableData changePassword(Client client){
+        String sql = "UPDATE users SET password = ?"
+                + "WHERE id = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, client.getPassword());
+            pstmt.setInt(2, client.getClientID());
+            pstmt.executeUpdate();
+            return new PortableData("200", null);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return new PortableData("400", null);
+    }
+    public static PortableData uploadProfile(Client client){
+        String sql = "UPDATE users SET profile = ?"
+                + "WHERE id = ?;";
+        try (Connection conn = UserQueries.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, client.getProfile());
+            pstmt.setInt(2, client.getClientID());
+            pstmt.executeUpdate();
+            return new PortableData("200", null);
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return new PortableData("400", null);
+    }
 }
 
